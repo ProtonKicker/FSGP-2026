@@ -1,3 +1,11 @@
-Badger Solar Racing
 University of Wisconsin-Madison
-Instagram: https://www.instagram.com/badgersolarracing
+#608 - Badger Solar Racing
+
+Sunburst
+SOV
+
+ASC & FSGP
+
+United States
+
+https://www.instagram.com/badgersolarracing
