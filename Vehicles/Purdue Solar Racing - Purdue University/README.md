@@ -1,3 +1,11 @@
-Purdue Solar Racing
 Purdue University
-Instagram: https://www.instagram.com/purduesolar/
+#1 - Purdue Solar Racing
+
+Artemis
+SOV
+
+ASC & FSGP
+
+United States
+
+https://www.instagram.com/purduesolar/

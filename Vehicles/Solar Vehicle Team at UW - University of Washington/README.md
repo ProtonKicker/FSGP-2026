@@ -1,3 +1,11 @@
-Solar Vehicle Team at UW
 University of Washington
-Instagram: https://www.instagram.com/solarvehicleteamuw/
+#86 - Solar Vehicle Team at UW
+
+Sakura
+SOV
+
+ASC & FSGP
+
+United States
+
+https://www.instagram.com/solarvehicleteamuw/

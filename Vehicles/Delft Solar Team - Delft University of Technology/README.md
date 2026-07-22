@@ -1,3 +1,11 @@
-Delft Solar Team
 Delft University of Technology
-Instagram: https://www.instagram.com/delftsolarteam/
+#30 - Delft Solar Team
+
+Nuna 13S
+SOV
+
+ASC & FSGP
+
+The Netherlands
+
+https://www.instagram.com/delftsolarteam/
