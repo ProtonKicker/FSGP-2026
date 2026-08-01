@@ -1,0 +1,6 @@
+data/
+*.csv
+*.log
+__pycache__/
+*.pyc
+.env
