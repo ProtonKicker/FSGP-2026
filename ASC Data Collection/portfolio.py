@@ -359,6 +359,7 @@ def generate_html(data_dir, manifest_path):
     ]
 
     quick_links = [
+        ("Comprehensive page", "asc_comprehensive.html"),
         ("Trajectory explorer", "asc_trajectory.html"),
         ("Compact dashboard", "asc_dashboard.html"),
         ("Dataset README", "dataset/README.md"),
