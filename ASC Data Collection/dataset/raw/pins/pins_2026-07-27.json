@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-07-27T07:00:01.570795-05:00",
+  "timestamp_unix": 1785153601.570795,
+  "pin_count": 3,
+  "pins": [
+    {
+      "id": "c5079a7ab8a347958e9db64c66ff50ab",
+      "latitude": 43.48094651321086,
+      "longitude": -91.21432361376831,
+      "color": "purple",
+      "message": "Dead deer on side of road",
+      "submitted_at": "2026-07-25T20:42:04.511296+00:00",
+      "approved": true,
+      "approved_at": "2026-07-25T20:42:04.511296+00:00"
+    },
+    {
+      "id": "162dcc7b63bd4bad86fa74990df28489",
+      "latitude": 43.05158737297872,
+      "longitude": -91.14882661096156,
+      "color": "orange",
+      "message": "Detour #2",
+      "submitted_at": "2026-07-25T21:30:35.949033+00:00",
+      "approved": true,
+      "approved_at": "2026-07-25T21:30:35.949033+00:00"
+    },
+    {
+      "id": "089818b7871d4f1b821cc7ed9f287aa0",
+      "latitude": 40.50290751074489,
+      "longitude": -89.04054488506517,
+      "color": "orange",
+      "message": "Detour #5",
+      "submitted_at": "2026-07-27T02:29:53.527055+00:00",
+      "approved": true,
+      "approved_at": "2026-07-27T02:29:53.527055+00:00"
+    }
+  ]
+}

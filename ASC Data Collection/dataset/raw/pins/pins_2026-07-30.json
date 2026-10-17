@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-07-30T07:00:01.567594-05:00",
+  "timestamp_unix": 1785412801.567594,
+  "pin_count": 3,
+  "pins": [
+    {
+      "id": "162dcc7b63bd4bad86fa74990df28489",
+      "latitude": 43.05158737297872,
+      "longitude": -91.14882661096156,
+      "color": "orange",
+      "message": "Detour #2",
+      "submitted_at": "2026-07-25T21:30:35.949033+00:00",
+      "approved": true,
+      "approved_at": "2026-07-25T21:30:35.949033+00:00"
+    },
+    {
+      "id": "d8c29fffc16a440c8d7c91cc69c29b9b",
+      "latitude": 40.50231740064819,
+      "longitude": -89.04012956929365,
+      "color": "orange",
+      "message": "Detour #5",
+      "submitted_at": "2026-07-27T13:09:38.287698+00:00",
+      "approved": true,
+      "approved_at": "2026-07-27T13:09:38.287698+00:00"
+    },
+    {
+      "id": "7ac4fad7353546c7b5716ebc6c347481",
+      "latitude": 37.94008457317655,
+      "longitude": -91.88109682553811,
+      "color": "purple",
+      "message": "Detour #6",
+      "submitted_at": "2026-07-28T13:47:20.811170+00:00",
+      "approved": true,
+      "approved_at": "2026-07-28T13:47:20.811170+00:00"
+    }
+  ]
+}

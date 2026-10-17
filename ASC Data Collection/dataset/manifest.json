@@ -1,0 +1,385 @@
+{
+  "root": "/Users/xianliding/Documents/GitHub/FSGP-2026/ASC Data Collection/dataset",
+  "source_root": "/Users/xianliding/Documents/GitHub/FSGP-2026/ASC Data Collection",
+  "packages": [
+    {
+      "kind": "updates",
+      "date": "2026-07-25",
+      "source_files": [
+        "data/updates_2026-07-25.jsonl"
+      ],
+      "output_file": "raw/updates/updates_2026-07-25.jsonl.gz",
+      "record_count": 848,
+      "original_bytes": 274285,
+      "archived_bytes": 14835,
+      "source_sha256": "7d7b0fca65001d48e5df71e98ad164fdc4615c454f97e3e762e72e9d9c1d8a20"
+    },
+    {
+      "kind": "updates",
+      "date": "2026-07-26",
+      "source_files": [
+        "data/updates_2026-07-26.jsonl"
+      ],
+      "output_file": "raw/updates/updates_2026-07-26.jsonl.gz",
+      "record_count": 36512,
+      "original_bytes": 13071861,
+      "archived_bytes": 612269,
+      "source_sha256": "3c8846aecd6a4d3ffa1d05b254253d5e7fca0b4e2a3d2bf49fdc16380c84cf9b"
+    },
+    {
+      "kind": "updates",
+      "date": "2026-07-27",
+      "source_files": [
+        "data/updates_2026-07-27.jsonl"
+      ],
+      "output_file": "raw/updates/updates_2026-07-27.jsonl.gz",
+      "record_count": 42061,
+      "original_bytes": 15081775,
+      "archived_bytes": 680677,
+      "source_sha256": "53899315d9add2ecf86ba5bbc35a2feda01cf12ea0c145bc1cac8a61d632bed0"
+    },
+    {
+      "kind": "updates",
+      "date": "2026-07-28",
+      "source_files": [
+        "data/updates_2026-07-28.jsonl"
+      ],
+      "output_file": "raw/updates/updates_2026-07-28.jsonl.gz",
+      "record_count": 37656,
+      "original_bytes": 13476169,
+      "archived_bytes": 627205,
+      "source_sha256": "5796253025912fe79e00040b8434e68dbe0d79a5708deac1f366e138210d723a"
+    },
+    {
+      "kind": "updates",
+      "date": "2026-07-29",
+      "source_files": [
+        "data/updates_2026-07-29.jsonl"
+      ],
+      "output_file": "raw/updates/updates_2026-07-29.jsonl.gz",
+      "record_count": 36191,
+      "original_bytes": 12881877,
+      "archived_bytes": 576947,
+      "source_sha256": "e639127e229a1f80fbd4a29e94a285a607d7d1854a6b0818200d5ea30c92e9f6"
+    },
+    {
+      "kind": "updates",
+      "date": "2026-07-30",
+      "source_files": [
+        "data/updates_2026-07-30.jsonl"
+      ],
+      "output_file": "raw/updates/updates_2026-07-30.jsonl.gz",
+      "record_count": 34614,
+      "original_bytes": 12337802,
+      "archived_bytes": 571398,
+      "source_sha256": "cde4f36de551dd00826b2b9a156dc618d508d9340a5e689b52f04e6876c86842"
+    },
+    {
+      "kind": "updates",
+      "date": "2026-07-31",
+      "source_files": [
+        "data/updates_2026-07-31.jsonl"
+      ],
+      "output_file": "raw/updates/updates_2026-07-31.jsonl.gz",
+      "record_count": 33171,
+      "original_bytes": 11820943,
+      "archived_bytes": 558886,
+      "source_sha256": "0195dbf5775517cd4dca358957cc13e99ebf8cc758fa64519c3be893ecf8271f"
+    },
+    {
+      "kind": "updates",
+      "date": "2026-08-01",
+      "source_files": [
+        "data/updates_2026-08-01.jsonl"
+      ],
+      "output_file": "raw/updates/updates_2026-08-01.jsonl.gz",
+      "record_count": 20593,
+      "original_bytes": 7375326,
+      "archived_bytes": 346884,
+      "source_sha256": "43a4acba427da02fb161cdd0221f68ec9ad0c12876bafe539075ed9fb810aa72"
+    },
+    {
+      "kind": "weather",
+      "date": "2026-07-26",
+      "source_files": [
+        "data/weather_2026-07-26.jsonl"
+      ],
+      "output_file": "raw/weather/weather_2026-07-26.jsonl.gz",
+      "record_count": 1431,
+      "original_bytes": 464842,
+      "archived_bytes": 35369,
+      "source_sha256": "2edcd9313034354b7823ba5e55f5775aff8805def6dff4a1f6228192b59d9b0e"
+    },
+    {
+      "kind": "weather",
+      "date": "2026-07-27",
+      "source_files": [
+        "data/weather_2026-07-27.jsonl"
+      ],
+      "output_file": "raw/weather/weather_2026-07-27.jsonl.gz",
+      "record_count": 1706,
+      "original_bytes": 551046,
+      "archived_bytes": 42414,
+      "source_sha256": "117f14532eb24fcf5e33ac4915a77b83f8969f1ca158268303c701c8dfd61d5a"
+    },
+    {
+      "kind": "weather",
+      "date": "2026-07-28",
+      "source_files": [
+        "data/weather_2026-07-28.jsonl"
+      ],
+      "output_file": "raw/weather/weather_2026-07-28.jsonl.gz",
+      "record_count": 1483,
+      "original_bytes": 480812,
+      "archived_bytes": 37883,
+      "source_sha256": "dc4eb567b0c1ffd4f0a350b985bfb2fddc9d04f5e95f5b365298a2906ddd6015"
+    },
+    {
+      "kind": "weather",
+      "date": "2026-07-29",
+      "source_files": [
+        "data/weather_2026-07-29.jsonl"
+      ],
+      "output_file": "raw/weather/weather_2026-07-29.jsonl.gz",
+      "record_count": 1715,
+      "original_bytes": 550131,
+      "archived_bytes": 40334,
+      "source_sha256": "3dc79d0221af1e065521b1b974de54909d572e640bd6ec400f9651a54f1b3618"
+    },
+    {
+      "kind": "weather",
+      "date": "2026-07-30",
+      "source_files": [
+        "data/weather_2026-07-30.jsonl"
+      ],
+      "output_file": "raw/weather/weather_2026-07-30.jsonl.gz",
+      "record_count": 1711,
+      "original_bytes": 549348,
+      "archived_bytes": 41027,
+      "source_sha256": "57ea62fe025278810847e93d97b0c67a05af539c3760aca40836f66ac0de60c2"
+    },
+    {
+      "kind": "weather",
+      "date": "2026-07-31",
+      "source_files": [
+        "data/weather_2026-07-31.jsonl"
+      ],
+      "output_file": "raw/weather/weather_2026-07-31.jsonl.gz",
+      "record_count": 1636,
+      "original_bytes": 524435,
+      "archived_bytes": 38780,
+      "source_sha256": "209c43e3152e4ccde6d0ae48e96c452ea014dcfa687463e77990f8cd7eab2405"
+    },
+    {
+      "kind": "weather",
+      "date": "2026-08-01",
+      "source_files": [
+        "data/weather_2026-08-01.jsonl"
+      ],
+      "output_file": "raw/weather/weather_2026-08-01.jsonl.gz",
+      "record_count": 1032,
+      "original_bytes": 329735,
+      "archived_bytes": 23449,
+      "source_sha256": "1409dcb97f7b067ae762b3559c0a212f4bf773b33f60b61604f01af9acc557d2"
+    },
+    {
+      "kind": "pins",
+      "date": "2026-07-26",
+      "source_files": [
+        "data/pins_2026-07-26.json"
+      ],
+      "output_file": "raw/pins/pins_2026-07-26.json",
+      "record_count": 2,
+      "original_bytes": 802,
+      "archived_bytes": 802,
+      "source_sha256": "cf5c34830536251e731cf5b7d616ce3b1385a39b70a0bd7adb8591134d410714"
+    },
+    {
+      "kind": "pins",
+      "date": "2026-07-27",
+      "source_files": [
+        "data/pins_2026-07-27.json"
+      ],
+      "output_file": "raw/pins/pins_2026-07-27.json",
+      "record_count": 3,
+      "original_bytes": 1132,
+      "archived_bytes": 1132,
+      "source_sha256": "69eb477721284a2a7f252c00f327aa98ff9f3b174af4525647bb66af9b7652ec"
+    },
+    {
+      "kind": "pins",
+      "date": "2026-07-28",
+      "source_files": [
+        "data/pins_2026-07-28.json"
+      ],
+      "output_file": "raw/pins/pins_2026-07-28.json",
+      "record_count": 2,
+      "original_bytes": 786,
+      "archived_bytes": 786,
+      "source_sha256": "b82f4b50ceff59f5d69204e0c18b35aee2855c8d377d0276565d594ac54cf3f7"
+    },
+    {
+      "kind": "pins",
+      "date": "2026-07-29",
+      "source_files": [
+        "data/pins_2026-07-29.json"
+      ],
+      "output_file": "raw/pins/pins_2026-07-29.json",
+      "record_count": 4,
+      "original_bytes": 1451,
+      "archived_bytes": 1451,
+      "source_sha256": "1d4894b772885f26c6c1d753077a8bec18e95e7567f1f252426201b402c94d89"
+    },
+    {
+      "kind": "pins",
+      "date": "2026-07-30",
+      "source_files": [
+        "data/pins_2026-07-30.json"
+      ],
+      "output_file": "raw/pins/pins_2026-07-30.json",
+      "record_count": 3,
+      "original_bytes": 1116,
+      "archived_bytes": 1116,
+      "source_sha256": "caca5ab35f4b2b9cd49cb9901b54fc71448cc946b8288ba53caf9bf45ac01315"
+    },
+    {
+      "kind": "pins",
+      "date": "2026-07-31",
+      "source_files": [
+        "data/pins_2026-07-31.json"
+      ],
+      "output_file": "raw/pins/pins_2026-07-31.json",
+      "record_count": 3,
+      "original_bytes": 1130,
+      "archived_bytes": 1130,
+      "source_sha256": "abdb7c857b88090ae639e5866b320b40378618a6c91a5cb955b67394a06c0169"
+    },
+    {
+      "kind": "pins",
+      "date": "2026-08-01",
+      "source_files": [
+        "data/pins_2026-08-01.json"
+      ],
+      "output_file": "raw/pins/pins_2026-08-01.json",
+      "record_count": 4,
+      "original_bytes": 1543,
+      "archived_bytes": 1543,
+      "source_sha256": "5bc8058cf00ea5bc8b9aa00f0c0c2ebaef09589ae64572c08fb2210f1ce25717"
+    },
+    {
+      "kind": "snapshots",
+      "date": "2026-07-25",
+      "source_file_count": 11,
+      "source_file_first": "data/traces_2026-07-25T23-57-52.json",
+      "source_file_last": "traces_2026-07-25T23-40-40.json",
+      "output_file": "raw/snapshots/snapshots_2026-07-25.jsonl.gz",
+      "record_count": 11,
+      "original_bytes": 91586,
+      "archived_bytes": 3001,
+      "source_sha256": "7ea018f22faef0261fee863bd9ad4c6cf0b95d855cf63c4441f08ebb8a8e67c9"
+    },
+    {
+      "kind": "snapshots",
+      "date": "2026-07-26",
+      "source_file_count": 4399,
+      "source_file_first": "data/traces_2026-07-26T00-07-10.json",
+      "source_file_last": "data/traces_2026-07-26T20-43-12.json",
+      "output_file": "raw/snapshots/snapshots_2026-07-26.jsonl.gz",
+      "record_count": 4399,
+      "original_bytes": 36718566,
+      "archived_bytes": 482803,
+      "source_sha256": "fc46ec9585d1fdbe5efc61012f4ce305fc64252b90826f550cc4ad27facca90b"
+    },
+    {
+      "kind": "snapshots",
+      "date": "2026-07-27",
+      "source_file_count": 1713,
+      "source_file_first": "data/traces_2026-07-27T07-00-00.json",
+      "source_file_last": "data/traces_2026-07-27T21-59-38.json",
+      "output_file": "raw/snapshots/snapshots_2026-07-27.jsonl.gz",
+      "record_count": 1713,
+      "original_bytes": 19117999,
+      "archived_bytes": 532253,
+      "source_sha256": "7854c0061197bfc142053b4bf3f65a0e30f5139fadbfe48e8d49784771500cd0"
+    },
+    {
+      "kind": "snapshots",
+      "date": "2026-07-28",
+      "source_file_count": 1486,
+      "source_file_first": "data/traces_2026-07-28T07-00-00.json",
+      "source_file_last": "data/traces_2026-07-28T19-59-49.json",
+      "output_file": "raw/snapshots/snapshots_2026-07-28.jsonl.gz",
+      "record_count": 1486,
+      "original_bytes": 16562017,
+      "archived_bytes": 476352,
+      "source_sha256": "5879e7ca628c1504a23e73678d943a587f48f87d0e49cfb5e9d1e72fb5942d3f"
+    },
+    {
+      "kind": "snapshots",
+      "date": "2026-07-29",
+      "source_file_count": 1716,
+      "source_file_first": "data/traces_2026-07-29T07-00-00.json",
+      "source_file_last": "data/traces_2026-07-29T21-59-51.json",
+      "output_file": "raw/snapshots/snapshots_2026-07-29.jsonl.gz",
+      "record_count": 1716,
+      "original_bytes": 16733475,
+      "archived_bytes": 463142,
+      "source_sha256": "eeeebc552e8a909cedccd8edd1156e15b89f9d30f7d423ae42528c8ba4653acd"
+    },
+    {
+      "kind": "snapshots",
+      "date": "2026-07-30",
+      "source_file_count": 1716,
+      "source_file_first": "data/traces_2026-07-30T07-00-00.json",
+      "source_file_last": "data/traces_2026-07-30T21-59-46.json",
+      "output_file": "raw/snapshots/snapshots_2026-07-30.jsonl.gz",
+      "record_count": 1716,
+      "original_bytes": 15240101,
+      "archived_bytes": 434113,
+      "source_sha256": "a092a6ccc842269762beab57d54b9458c45390de4d6884e35c0f57ae23006ac0"
+    },
+    {
+      "kind": "snapshots",
+      "date": "2026-07-31",
+      "source_file_count": 1642,
+      "source_file_first": "data/traces_2026-07-31T07-00-00.json",
+      "source_file_last": "data/traces_2026-07-31T21-23-04.json",
+      "output_file": "raw/snapshots/snapshots_2026-07-31.jsonl.gz",
+      "record_count": 1642,
+      "original_bytes": 14461909,
+      "archived_bytes": 415614,
+      "source_sha256": "8edf8405dc2fbe9c4a352274dcb1bd0af46ac832f13c3c35574e466fe0c8c0e1"
+    },
+    {
+      "kind": "snapshots",
+      "date": "2026-08-01",
+      "source_file_count": 1034,
+      "source_file_first": "data/traces_2026-08-01T07-00-00.json",
+      "source_file_last": "data/traces_2026-08-01T18-10-55.json",
+      "output_file": "raw/snapshots/snapshots_2026-08-01.jsonl.gz",
+      "record_count": 1034,
+      "original_bytes": 9135272,
+      "archived_bytes": 260260,
+      "source_sha256": "0f1fb1c8000fef47030408c8861a7dcc0a5b8d24c7c644b850cda005241c67f9"
+    },
+    {
+      "kind": "collector_log",
+      "date": "2026-07-26_to_2026-08-01",
+      "source_files": [
+        "collector.log"
+      ],
+      "output_file": "raw/logs/collector_2026-07-26_to_2026-08-01.log.gz",
+      "record_count": 2035789,
+      "original_bytes": 129627141,
+      "archived_bytes": 7271413,
+      "source_sha256": "68cc6f41a73f133ced19093a4f363b3f1d023552ccf6640e797885451f9983cd"
+    }
+  ],
+  "totals": {
+    "package_count": 31,
+    "record_count": 2301887,
+    "original_bytes": 347466413,
+    "archived_bytes": 14595268
+  },
+  "created_at": "2026-10-17T17:18:45.468082+00:00"
+}

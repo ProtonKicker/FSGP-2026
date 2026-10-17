@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-07-31T07:00:01.484839-05:00",
+  "timestamp_unix": 1785499201.484839,
+  "pin_count": 3,
+  "pins": [
+    {
+      "id": "708677ef531049cf969ba3d444d155c6",
+      "latitude": 36.18114697259043,
+      "longitude": -95.74710194601317,
+      "color": "green",
+      "message": "Catoosa Chamber Office",
+      "submitted_at": "2026-07-30T16:46:59.928360+00:00",
+      "approved": true,
+      "approved_at": "2026-07-30T16:57:24.165603+00:00"
+    },
+    {
+      "id": "ef6908ec61e541b586c5dc0f2997f498",
+      "latitude": 35.667268095676434,
+      "longitude": -97.3896991973743,
+      "color": "orange",
+      "message": "Detour #7",
+      "submitted_at": "2026-07-30T19:00:27.453517+00:00",
+      "approved": true,
+      "approved_at": "2026-07-30T19:00:27.453517+00:00"
+    },
+    {
+      "id": "42789e9ddbe640e68fc4668316004419",
+      "latitude": 35.81184282921866,
+      "longitude": -96.4883853776692,
+      "color": "orange",
+      "message": "Construction",
+      "submitted_at": "2026-07-30T22:00:55.454049+00:00",
+      "approved": true,
+      "approved_at": "2026-07-30T22:00:55.454049+00:00"
+    }
+  ]
+}
