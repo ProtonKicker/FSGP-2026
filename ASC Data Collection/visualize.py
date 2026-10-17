@@ -436,6 +436,14 @@ button:hover {{
     grid-template-columns: 1fr 1fr;
     gap: 8px;
 }}
+.unit-toggle {{
+    display: inline-flex;
+    gap: 8px;
+}}
+.unit-toggle button.active {{
+    background: rgba(88, 166, 255, 0.18);
+    border-color: #58a6ff;
+}}
 .summary-grid {{
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -642,6 +650,10 @@ button:hover {{
                     <button id="play-btn">Play</button>
                     <button id="reset-btn">Reset</button>
                 </div>
+                <div class="unit-toggle">
+                    <button id="metric-btn" class="active">Metric</button>
+                    <button id="imperial-btn">Imperial</button>
+                </div>
             </div>
         </div>
 
@@ -735,10 +747,20 @@ let playbackSpeed = 1;
 let lastFrameTime = 0;
 let animationFrameId = null;
 let focusedTeamKey = null;
+let unitSystem = "metric";
 
-function kmToMi(value) {{
+function formatDistance(value) {{
     if (value == null || Number.isNaN(value)) return "N/A";
-    return (value / 1.609344).toFixed(1) + " mi";
+    return unitSystem === "metric"
+        ? `${{Number(value).toFixed(1)}} km`
+        : `${{(value / 1.609344).toFixed(1)}} mi`;
+}}
+
+function formatSpeed(value) {{
+    if (value == null || Number.isNaN(value)) return "N/A";
+    return unitSystem === "metric"
+        ? `${{Number(value).toFixed(1)}} km/h`
+        : `${{(value / 1.609344).toFixed(1)}} mph`;
 }}
 
 function secondsToDuration(seconds) {{
@@ -880,7 +902,7 @@ function updateMarkers(time) {{
         const position = getPositionAtTime(layer.team, time);
         if (!position || position.lat == null || position.lng == null) return;
         layer.marker.setLatLng([position.lat, position.lng]);
-        const speed = position.speed != null ? `${{Number(position.speed).toFixed(1)}} km/h` : "N/A";
+        const speed = position.speed != null ? formatSpeed(position.speed) : "N/A";
         layer.marker.bindTooltip(`<b>${{layer.team.name}}</b><br>${{speed}}`, {{ direction: "top" }});
     }});
 }}
@@ -928,7 +950,7 @@ function buildRoster() {{
                 <div class="team-dot" style="background:${{team.color}}"></div>
                 <div>
                     <div>${{team.name}}</div>
-                    <div class="team-meta">${{kmToMi(team.stats.distance_km)}} route · ${{team.stats.sample_count}} points</div>
+                    <div class="team-meta">${{formatDistance(team.stats.distance_km)}} route · ${{team.stats.sample_count}} points</div>
                 </div>
                 <div class="team-meta">${{team.stats.anomaly_count || 0}} alerts</div>
             </div>
@@ -948,7 +970,7 @@ function fleetSummary() {{
     const totalGaps = TRAJECTORIES.reduce((sum, team) => sum + (team.stats.gap_count || 0), 0);
     const longestGap = Math.max(0, ...TRAJECTORIES.map(team => team.stats.largest_gap_sec || 0));
     return [
-        {{ label: "Fleet Route", value: kmToMi(totalDistanceKm), note: "Combined path distance" }},
+        {{ label: "Fleet Route", value: formatDistance(totalDistanceKm), note: "Combined path distance" }},
         {{ label: "Moving Time", value: secondsToDuration(totalMovingTimeSec), note: "Across all teams" }},
         {{ label: "Route Alerts", value: String(totalAlerts), note: "Suspicious route segments" }},
         {{ label: "Stops", value: String(totalStops), note: "Long idle periods" }},
@@ -960,10 +982,10 @@ function fleetSummary() {{
 function teamSummary(team) {{
     const stats = team.stats || {{}};
     return [
-        {{ label: "Route", value: kmToMi(stats.distance_km), note: `Straight-line ${{kmToMi(stats.straight_distance_km)}}` }},
+        {{ label: "Route", value: formatDistance(stats.distance_km), note: `Straight-line ${{formatDistance(stats.straight_distance_km)}}` }},
         {{ label: "Moving Time", value: secondsToDuration(stats.moving_time_sec), note: `Idle ${{secondsToDuration(stats.idle_time_sec)}}` }},
-        {{ label: "Tour Pace", value: stats.moving_average_speed_kph != null ? `${{stats.moving_average_speed_kph.toFixed(1)}} km/h` : "N/A", note: "Average while moving" }},
-        {{ label: "Top Speed", value: stats.max_speed_kph != null ? `${{stats.max_speed_kph.toFixed(1)}} km/h` : "N/A", note: "Highest observed or implied" }},
+        {{ label: "Tour Pace", value: stats.moving_average_speed_kph != null ? formatSpeed(stats.moving_average_speed_kph) : "N/A", note: "Average while moving" }},
+        {{ label: "Top Speed", value: stats.max_speed_kph != null ? formatSpeed(stats.max_speed_kph) : "N/A", note: "Highest observed or implied" }},
         {{ label: "Stops", value: String(stats.stop_count || 0), note: `Active ${{stats.active_ratio_pct != null ? stats.active_ratio_pct.toFixed(1) + "%" : "N/A"}}` }},
         {{ label: "Data Quality", value: String(stats.anomaly_count || 0), note: stats.gap_count ? `${{stats.gap_count}} gaps, largest ${{secondsToDuration(stats.largest_gap_sec)}}` : "No large gaps" }},
         {{ label: "Sample Density", value: String(stats.sample_count || 0), note: stats.average_sample_gap_sec != null ? `Avg gap ${{Math.round(stats.average_sample_gap_sec)}}s` : "Single point only" }},
@@ -1011,8 +1033,8 @@ function renderAnomalyList() {{
             <div class="anomaly-title">${{anomaly.reason}}</div>
             <div class="anomaly-meta">
                 ${{anomaly.time || "Time unavailable"}}<br>
-                Segment ${{anomaly.distance_km}} km in ${{secondsToDuration(anomaly.gap_sec)}}<br>
-                Implied speed ${{anomaly.segment_speed_kph}} km/h
+                Segment ${{formatDistance(anomaly.distance_km)}} in ${{secondsToDuration(anomaly.gap_sec)}}<br>
+                Implied speed ${{formatSpeed(anomaly.segment_speed_kph)}}
             </div>
         </div>
     `).join("") : '<div class="muted">No suspicious segments found for this team.</div>';
@@ -1053,8 +1075,8 @@ function renderAnomalyOverlays() {{
             <div style="min-width:220px">
                 <div style="font-weight:700;margin-bottom:6px">${{anomaly.reason}}</div>
                 <div class="muted">${{anomaly.time || "Time unavailable"}}</div>
-                <div class="muted">${{anomaly.distance_km}} km over ${{secondsToDuration(anomaly.gap_sec)}}</div>
-                <div class="muted">${{anomaly.segment_speed_kph}} km/h implied</div>
+                <div class="muted">${{formatDistance(anomaly.distance_km)}} over ${{secondsToDuration(anomaly.gap_sec)}}</div>
+                <div class="muted">${{formatSpeed(anomaly.segment_speed_kph)}} implied</div>
             </div>
         `);
         line.addTo(anomalyLayer);
@@ -1174,6 +1196,24 @@ document.getElementById("play-btn").addEventListener("click", () => {{
 document.getElementById("reset-btn").addEventListener("click", resetReplay);
 document.getElementById("fit-all-btn").addEventListener("click", fitAll);
 document.getElementById("fit-focus-btn").addEventListener("click", fitFocus);
+document.getElementById("metric-btn").addEventListener("click", () => {{
+    unitSystem = "metric";
+    document.getElementById("metric-btn").classList.add("active");
+    document.getElementById("imperial-btn").classList.remove("active");
+    buildRoster();
+    renderSummaryCards();
+    renderAnomalyList();
+    updateMarkers(currentTime);
+}});
+document.getElementById("imperial-btn").addEventListener("click", () => {{
+    unitSystem = "imperial";
+    document.getElementById("imperial-btn").classList.add("active");
+    document.getElementById("metric-btn").classList.remove("active");
+    buildRoster();
+    renderSummaryCards();
+    renderAnomalyList();
+    updateMarkers(currentTime);
+}});
 document.getElementById("speed-select").addEventListener("change", event => {{
     playbackSpeed = Number(event.target.value || 1);
 }});

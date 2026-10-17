@@ -6,6 +6,7 @@ Build a tracked, Git-friendly archival dataset from the local ASC raw capture.
 from __future__ import annotations
 
 import argparse
+import csv
 import gzip
 import hashlib
 import json
@@ -13,6 +14,8 @@ import shutil
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
+
+import data_access
 
 
 def sha256_file(path):
@@ -149,6 +152,129 @@ def package_log(log_path, output_dir, manifest):
     })
 
 
+def write_csv(path, fieldnames, rows):
+    with open(path, "w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def build_daily_coverage_rows(data_dir):
+    summary = defaultdict(lambda: {"updates": 0, "snapshots": 0, "weather": 0, "pins": 0})
+
+    for entry in data_access.iter_update_records(data_dir):
+        day = (entry.get("_t") or "")[:10]
+        summary[day]["updates"] += 1
+
+    for snapshot in data_access.iter_snapshot_records(data_dir):
+        day = (snapshot.get("timestamp") or "")[:10]
+        summary[day]["snapshots"] += 1
+
+    for record in data_access.iter_weather_records(data_dir):
+        day = (record.get("_recorded") or "")[:10]
+        summary[day]["weather"] += 1
+
+    for record in data_access.iter_pin_snapshots(data_dir):
+        day = (record.get("timestamp") or "")[:10]
+        summary[day]["pins"] += len(record.get("pins", []))
+
+    rows = []
+    for day, counts in sorted(summary.items()):
+        rows.append({
+            "date": day,
+            "update_records": counts["updates"],
+            "snapshot_records": counts["snapshots"],
+            "weather_records": counts["weather"],
+            "approved_pins": counts["pins"],
+        })
+    return rows
+
+
+def build_team_metric_rows(data_dir):
+    rows = []
+    for team in sorted(
+        data_access.load_updates(data_dir),
+        key=lambda item: item["stats"]["distance_km"],
+        reverse=True,
+    ):
+        stats = team["stats"]
+        rows.append({
+            "team_name": team["name"],
+            "serial": team["serial"],
+            "samples": stats["sample_count"],
+            "route_distance_km": stats["distance_km"],
+            "route_distance_mi": round((stats["distance_km"] or 0.0) / 1.609344, 1),
+            "straight_distance_km": stats["straight_distance_km"],
+            "moving_time_hours": round((stats["moving_time_sec"] or 0) / 3600.0, 2),
+            "avg_speed_kph": stats["average_speed_kph"],
+            "moving_avg_speed_kph": stats["moving_average_speed_kph"],
+            "max_speed_kph": stats["max_speed_kph"],
+            "active_ratio_pct": stats["active_ratio_pct"],
+            "anomaly_count": stats["anomaly_count"],
+            "gap_count": stats["gap_count"],
+            "largest_gap_sec": stats["largest_gap_sec"],
+            "first_sample": stats["start_time"],
+            "last_sample": stats["end_time"],
+        })
+    return rows
+
+
+def write_teammate_outputs(output_root, raw_output, manifest):
+    daily_rows = build_daily_coverage_rows(raw_output)
+    team_rows = build_team_metric_rows(raw_output)
+
+    write_csv(
+        output_root / "daily_coverage.csv",
+        ["date", "update_records", "snapshot_records", "weather_records", "approved_pins"],
+        daily_rows,
+    )
+    write_csv(
+        output_root / "team_metrics.csv",
+        [
+            "team_name",
+            "serial",
+            "samples",
+            "route_distance_km",
+            "route_distance_mi",
+            "straight_distance_km",
+            "moving_time_hours",
+            "avg_speed_kph",
+            "moving_avg_speed_kph",
+            "max_speed_kph",
+            "active_ratio_pct",
+            "anomaly_count",
+            "gap_count",
+            "largest_gap_sec",
+            "first_sample",
+            "last_sample",
+        ],
+        team_rows,
+    )
+
+    summary = {
+        "created_at": manifest["created_at"],
+        "totals": manifest["totals"],
+        "coverage_dates": [row["date"] for row in daily_rows],
+        "team_count": len(team_rows),
+        "top_teams_by_distance_km": [
+            {
+                "team_name": row["team_name"],
+                "route_distance_km": row["route_distance_km"],
+                "anomaly_count": row["anomaly_count"],
+            }
+            for row in team_rows[:10]
+        ],
+        "notes": [
+            "dataset/raw is the portable source of truth committed to Git.",
+            "restore_dataset.py can recreate a working raw folder from the tracked archive.",
+            "Snapshot JSON objects are preserved losslessly, though restored formatting may differ from the original pretty-printed files.",
+        ],
+    }
+    with open(output_root / "summary.json", "w", encoding="utf-8") as handle:
+        json.dump(summary, handle, indent=2)
+        handle.write("\n")
+
+
 def summarize_manifest(manifest):
     totals = defaultdict(int)
     for package in manifest["packages"]:
@@ -184,10 +310,12 @@ def build_dataset(base_dir, output_root):
 
     manifest_path = output_root / "manifest.json"
     readme_path = output_root / "README.md"
+    guide_path = output_root / "TEAMMATE_GUIDE.md"
     manifest = summarize_manifest(manifest)
     with open(manifest_path, "w", encoding="utf-8") as handle:
         json.dump(manifest, handle, indent=2)
         handle.write("\n")
+    write_teammate_outputs(output_root, raw_output, manifest)
     readme_path.write_text(
         "\n".join([
             "# ASC 2026 archival dataset",
@@ -200,8 +328,41 @@ def build_dataset(base_dir, output_root):
             "- `raw/pins/*.json`: approved route pins per day",
             "- `raw/logs/*.log.gz`: compressed collector log archive",
             "- `manifest.json`: package-level inventory, counts, and source integrity hashes",
+            "- `summary.json`: quick machine-readable overview for teammates or scripts",
+            "- `daily_coverage.csv`: one row per race day",
+            "- `team_metrics.csv`: one row per team with route metrics and quality signals",
             "",
             "The original runtime `data/` folder can stay ignored for live collection. This dataset is the tracked archive meant for Git.",
+            "If the local raw folder is gone, run `python3 restore_dataset.py` from the ASC Data Collection directory to recreate a working copy from this archive.",
+            "",
+        ]),
+        encoding="utf-8",
+    )
+    guide_path.write_text(
+        "\n".join([
+            "# Teammate guide",
+            "",
+            "Start here if you just cloned the repo and want to understand the ASC capture quickly.",
+            "",
+            "## Fastest files to open",
+            "",
+            "1. `summary.json` for a quick machine-readable overview",
+            "2. `daily_coverage.csv` to see how much data exists per day",
+            "3. `team_metrics.csv` to compare team routes and data quality",
+            "4. `../asc_data_portfolio.html` for the visual overview",
+            "5. `../asc_trajectory.html` for the route replay",
+            "",
+            "## Source of truth",
+            "",
+            "- Everything under `raw/` is the portable archive committed to Git.",
+            "- The ignored `../data/` folder is only the local runtime shape used during live collection.",
+            "- `restore_dataset.py` can rebuild a working raw folder from the tracked archive.",
+            "",
+            "## Notes",
+            "",
+            "- Update, weather, pin, and log content are preserved losslessly.",
+            "- Snapshot objects are preserved losslessly, though restored JSON formatting may not match the original pretty-printed files byte-for-byte.",
+            "- Distances in derived CSVs are local calculations from captured coordinates, not official ASC progress values.",
             "",
         ]),
         encoding="utf-8",

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate a portfolio-style HTML overview for the ASC 2026 dataset.
+Generate a portable, teammate-friendly HTML overview for the ASC 2026 dataset.
 """
 
 from __future__ import annotations
@@ -19,7 +19,6 @@ import data_access
 
 DEFAULT_OUTPUT = "asc_data_portfolio.html"
 DEFAULT_MANIFEST = "dataset/manifest.json"
-
 LOG_LINE_RE = re.compile(
     r"^(?P<ts>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) "
     r"\[(?P<level>[A-Z]+)\] (?P<logger>[^:]+): (?P<message>.*)$"
@@ -47,13 +46,34 @@ def fmt_duration(seconds):
     seconds = int(seconds or 0)
     hours, remainder = divmod(seconds, 3600)
     minutes, _ = divmod(remainder, 60)
-    if hours:
-        return f"{hours}h {minutes}m"
-    return f"{minutes}m"
+    return f"{hours}h {minutes}m" if hours else f"{minutes}m"
+
+
+def miles(km):
+    return None if km is None else km / 1.609344
+
+
+def mph(kph):
+    return None if kph is None else kph / 1.609344
+
+
+def feet(meters):
+    return None if meters is None else meters * 3.28084
+
+
+def f_temp(celsius):
+    return None if celsius is None else (celsius * 9.0 / 5.0) + 32.0
 
 
 def day_key_from_iso(value):
     return (value or "")[:10]
+
+
+def unit_value(metric, imperial):
+    return (
+        f'<span class="unit-value" data-metric="{html.escape(metric)}" '
+        f'data-imperial="{html.escape(imperial)}">{html.escape(metric)}</span>'
+    )
 
 
 def simplify_points(points, max_points=240):
@@ -76,12 +96,7 @@ def load_manifest(path):
 
 
 def summarize_daily_counts(data_dir, snapshots, weather_records, pin_records):
-    summary = defaultdict(lambda: {
-        "updates": 0,
-        "snapshots": 0,
-        "weather": 0,
-        "pins": 0,
-    })
+    summary = defaultdict(lambda: {"updates": 0, "snapshots": 0, "weather": 0, "pins": 0})
 
     for entry in data_access.iter_update_records(data_dir):
         summary[day_key_from_iso(entry.get("_t"))]["updates"] += 1
@@ -109,8 +124,8 @@ def summarize_weather(weather_records):
             "samples": len(items),
             "temp_min": min(temps) if temps else None,
             "temp_max": max(temps) if temps else None,
-            "temp_avg": sum(temps) / len(temps) if temps else None,
-            "wind_avg": sum(winds) / len(winds) if winds else None,
+            "temp_avg": (sum(temps) / len(temps)) if temps else None,
+            "wind_avg": (sum(winds) / len(winds)) if winds else None,
             "top_condition": conditions.most_common(1)[0][0] if conditions else "Unknown",
         })
     return daily
@@ -153,7 +168,7 @@ def summarize_log(log_path):
     summary["levels"] = dict(summary["levels"])
     summary["unexpected_errors"] = [
         {"message": message, "count": count}
-        for message, count in summary["unexpected_errors"].most_common(8)
+        for message, count in summary["unexpected_errors"].most_common(6)
     ]
     return summary
 
@@ -161,11 +176,11 @@ def summarize_log(log_path):
 def render_cards(cards):
     return "".join(
         f"""
-        <div class="card">
-            <div class="card-label">{html.escape(card['label'])}</div>
-            <div class="card-value">{html.escape(card['value'])}</div>
-            <div class="card-note">{html.escape(card.get('note', ''))}</div>
-        </div>
+        <article class="stat-card">
+          <div class="eyebrow">{html.escape(card['label'])}</div>
+          <div class="stat-value">{card['value']}</div>
+          <div class="stat-note">{html.escape(card.get('note', ''))}</div>
+        </article>
         """
         for card in cards
     )
@@ -173,23 +188,21 @@ def render_cards(cards):
 
 def render_daily_rows(daily_counts):
     peak_updates = max((row["updates"] for row in daily_counts.values()), default=1)
-    peak_snapshots = max((row["snapshots"] for row in daily_counts.values()), default=1)
     rows = []
     for day, counts in daily_counts.items():
         rows.append(
             f"""
             <tr>
-                <td>{html.escape(day)}</td>
-                <td>
-                    <div class="bar-cell"><span>{fmt_int(counts['updates'])}</span>
-                    <div class="bar"><div style="width:{(counts['updates'] / peak_updates) * 100:.1f}%"></div></div></div>
-                </td>
-                <td>
-                    <div class="bar-cell"><span>{fmt_int(counts['snapshots'])}</span>
-                    <div class="bar"><div style="width:{(counts['snapshots'] / peak_snapshots) * 100:.1f}%"></div></div></div>
-                </td>
-                <td>{fmt_int(counts['weather'])}</td>
-                <td>{fmt_int(counts['pins'])}</td>
+              <td>{html.escape(day)}</td>
+              <td>
+                <div class="bar-cell">
+                  <span>{fmt_int(counts['updates'])}</span>
+                  <div class="bar"><div style="width:{(counts['updates'] / peak_updates) * 100:.1f}%"></div></div>
+                </div>
+              </td>
+              <td>{fmt_int(counts['snapshots'])}</td>
+              <td>{fmt_int(counts['weather'])}</td>
+              <td>{fmt_int(counts['pins'])}</td>
             </tr>
             """
         )
@@ -203,13 +216,14 @@ def render_team_rows(teams):
         rows.append(
             f"""
             <tr>
-                <td><span class="dot" style="background:{html.escape(team['color'])}"></span>{html.escape(team['name'])}</td>
-                <td>{fmt_int(stats['sample_count'])}</td>
-                <td>{fmt_float(stats['distance_km'])}</td>
-                <td>{fmt_duration(stats['elapsed_sec'])}</td>
-                <td>{fmt_float(stats['active_ratio_pct'] or 0)}%</td>
-                <td>{fmt_float(stats['max_speed_kph'] or 0)}</td>
-                <td>{fmt_int(stats['anomaly_count'])}</td>
+              <td><span class="dot" style="background:{html.escape(team['color'])}"></span>{html.escape(team['name'])}</td>
+              <td>{fmt_int(stats['sample_count'])}</td>
+              <td>{unit_value(f"{fmt_float(stats['distance_km'])} km", f"{fmt_float(miles(stats['distance_km']))} mi")}</td>
+              <td>{unit_value(f"{fmt_float(stats['moving_average_speed_kph'] or 0)} km/h", f"{fmt_float(mph(stats['moving_average_speed_kph'] or 0))} mph") if stats['moving_average_speed_kph'] is not None else 'N/A'}</td>
+              <td>{unit_value(f"{fmt_float(stats['max_speed_kph'] or 0)} km/h", f"{fmt_float(mph(stats['max_speed_kph'] or 0))} mph") if stats['max_speed_kph'] is not None else 'N/A'}</td>
+              <td>{fmt_duration(stats['elapsed_sec'])}</td>
+              <td>{fmt_float(stats['active_ratio_pct'] or 0)}%</td>
+              <td>{fmt_int(stats['anomaly_count'])}</td>
             </tr>
             """
         )
@@ -222,13 +236,13 @@ def render_weather_rows(weather_daily):
         rows.append(
             f"""
             <tr>
-                <td>{html.escape(row['day'])}</td>
-                <td>{fmt_int(row['samples'])}</td>
-                <td>{fmt_float(row['temp_min']) if row['temp_min'] is not None else 'N/A'} C</td>
-                <td>{fmt_float(row['temp_avg']) if row['temp_avg'] is not None else 'N/A'} C</td>
-                <td>{fmt_float(row['temp_max']) if row['temp_max'] is not None else 'N/A'} C</td>
-                <td>{fmt_float(row['wind_avg']) if row['wind_avg'] is not None else 'N/A'} km/h</td>
-                <td>{html.escape(row['top_condition'])}</td>
+              <td>{html.escape(row['day'])}</td>
+              <td>{fmt_int(row['samples'])}</td>
+              <td>{unit_value(f"{fmt_float(row['temp_min'])} C", f"{fmt_float(f_temp(row['temp_min']))} F") if row['temp_min'] is not None else 'N/A'}</td>
+              <td>{unit_value(f"{fmt_float(row['temp_avg'])} C", f"{fmt_float(f_temp(row['temp_avg']))} F") if row['temp_avg'] is not None else 'N/A'}</td>
+              <td>{unit_value(f"{fmt_float(row['temp_max'])} C", f"{fmt_float(f_temp(row['temp_max']))} F") if row['temp_max'] is not None else 'N/A'}</td>
+              <td>{unit_value(f"{fmt_float(row['wind_avg'])} km/h", f"{fmt_float(mph(row['wind_avg']))} mph") if row['wind_avg'] is not None else 'N/A'}</td>
+              <td>{html.escape(row['top_condition'])}</td>
             </tr>
             """
         )
@@ -243,12 +257,12 @@ def render_manifest_rows(manifest):
         rows.append(
             f"""
             <tr>
-                <td>{html.escape(package['kind'])}</td>
-                <td>{html.escape(package['date'])}</td>
-                <td>{html.escape(package['output_file'])}</td>
-                <td>{fmt_int(package['record_count'])}</td>
-                <td>{fmt_bytes(package['original_bytes'])}</td>
-                <td>{fmt_bytes(package['archived_bytes'])}</td>
+              <td>{html.escape(package['kind'])}</td>
+              <td>{html.escape(package['date'])}</td>
+              <td><code>{html.escape(package['output_file'])}</code></td>
+              <td>{fmt_int(package['record_count'])}</td>
+              <td>{fmt_bytes(package['original_bytes'])}</td>
+              <td>{fmt_bytes(package['archived_bytes'])}</td>
             </tr>
             """
         )
@@ -257,12 +271,12 @@ def render_manifest_rows(manifest):
 
 def render_log_errors(log_summary):
     if not log_summary["unexpected_errors"]:
-        return '<div class="muted-block">No unexpected error lines found in the archived collector log.</div>'
+        return '<div class="callout muted-callout">No unexpected error lines found in the archived collector log.</div>'
     return "".join(
         f"""
-        <div class="error-item">
-            <div class="error-count">{fmt_int(item['count'])}</div>
-            <div>{html.escape(item['message'])}</div>
+        <div class="log-item">
+          <div class="log-count">{fmt_int(item['count'])}</div>
+          <div>{html.escape(item['message'])}</div>
         </div>
         """
         for item in log_summary["unexpected_errors"]
@@ -280,11 +294,7 @@ def generate_html(data_dir, manifest_path):
     weather_daily = summarize_weather(weather_records)
 
     map_payload = [
-        {
-            "name": team["name"],
-            "color": team["color"],
-            "points": simplify_points(team["points"]),
-        }
+        {"name": team["name"], "color": team["color"], "points": simplify_points(team["points"])}
         for team in teams
     ]
     pin_payload = pins
@@ -294,27 +304,73 @@ def generate_html(data_dir, manifest_path):
 
     sample_update = next(data_access.iter_update_records(data_dir), {})
     sample_weather = next(iter(weather_records), {})
-    sample_pin = (pin_records[0]["pins"][0] if pin_records and pin_records[0].get("pins") else {})
+    sample_pin = pin_records[0]["pins"][0] if pin_records and pin_records[0].get("pins") else {}
     sample_snapshot = next(data_access.iter_snapshot_records(data_dir), {})
     sample_tracker = (sample_snapshot.get("trackers") or [{}])[0]
 
-    first_time = min((team["stats"]["start_sample_unix"] for team in teams if team["stats"]["start_sample_unix"]), default=0)
-    last_time = max((team["stats"]["end_sample_unix"] for team in teams if team["stats"]["end_sample_unix"]), default=0)
+    first_time = min(
+        (team["stats"]["start_sample_unix"] for team in teams if team["stats"]["start_sample_unix"]),
+        default=0,
+    )
+    last_time = max(
+        (team["stats"]["end_sample_unix"] for team in teams if team["stats"]["end_sample_unix"]),
+        default=0,
+    )
     coverage = (
         f"{datetime.fromtimestamp(first_time).isoformat(sep=' ', timespec='minutes')} "
         f"to {datetime.fromtimestamp(last_time).isoformat(sep=' ', timespec='minutes')}"
-        if first_time and last_time else "N/A"
+        if first_time and last_time
+        else "N/A"
     )
 
+    archive_bytes = manifest["totals"]["archived_bytes"] if manifest else 0
+    original_bytes = manifest["totals"]["original_bytes"] if manifest else 0
+    compression_ratio = (archive_bytes / original_bytes) if original_bytes else 0
+
     cards = [
-        {"label": "Tracked dataset size", "value": fmt_bytes(manifest["totals"]["archived_bytes"] if manifest else 0), "note": "Lossless archive committed to Git"},
-        {"label": "Updates", "value": fmt_int(sum(row["updates"] for row in daily_counts.values())), "note": "Location updates across all teams"},
-        {"label": "Snapshots", "value": fmt_int(sum(row["snapshots"] for row in daily_counts.values())), "note": "Full tracker snapshots"},
-        {"label": "Weather samples", "value": fmt_int(sum(row["weather"] for row in daily_counts.values())), "note": "Open-Meteo observations"},
+        {"label": "Tracked archive", "value": fmt_bytes(archive_bytes), "note": "Git-portable source of truth"},
+        {"label": "Original source volume", "value": fmt_bytes(original_bytes), "note": "Before compression and packaging"},
+        {"label": "Compression ratio", "value": f"{compression_ratio:.1%}" if compression_ratio else "N/A", "note": "Archive size divided by original size"},
         {"label": "Teams seen", "value": fmt_int(len(teams)), "note": "Unique trackers with route history"},
-        {"label": "Pins captured", "value": fmt_int(len(pins)), "note": "Approved detours, hazards, and notes"},
-        {"label": "Coverage window", "value": coverage, "note": "From first to last team sample"},
-        {"label": "Collector log", "value": fmt_int(log_summary["line_count"]), "note": "Archived log lines for debugging"},
+        {"label": "Coverage window", "value": coverage, "note": "From first to last recorded team sample"},
+        {"label": "Approved pins", "value": fmt_int(len(pins)), "note": "Hazards, detours, and route notes"},
+        {"label": "Snapshot records", "value": fmt_int(sum(item["count"] for item in snapshots)), "note": "Full tracker snapshots"},
+        {"label": "Collector log lines", "value": fmt_int(log_summary["line_count"]), "note": "Archived debugging trail"},
+    ]
+
+    top_team = max(teams, key=lambda item: item["stats"]["distance_km"]) if teams else None
+    sections = [
+        {
+            "title": "If you delete the local raw folder",
+            "body": (
+                "You still keep the actual collected content. "
+                "The tracked `dataset/raw` folder is the portable source of truth, and "
+                "`restore_dataset.py` can rebuild a working raw layout from it."
+            ),
+        },
+        {
+            "title": "Open these first",
+            "body": (
+                "`dataset/TEAMMATE_GUIDE.md`, `dataset/summary.json`, `dataset/daily_coverage.csv`, "
+                "and `dataset/team_metrics.csv` are the quickest non-visual entry points for a teammate."
+            ),
+        },
+        {
+            "title": "Biggest route in this capture",
+            "body": (
+                f"{top_team['name']} covered about {fmt_float(top_team['stats']['distance_km'])} km "
+                f"({fmt_float(miles(top_team['stats']['distance_km']))} mi) in the derived local route math."
+                if top_team else "No team route data available."
+            ),
+        },
+    ]
+
+    quick_links = [
+        ("Trajectory explorer", "asc_trajectory.html"),
+        ("Compact dashboard", "asc_dashboard.html"),
+        ("Dataset README", "dataset/README.md"),
+        ("Teammate guide", "dataset/TEAMMATE_GUIDE.md"),
+        ("Restore script", "restore_dataset.py"),
     ]
 
     html_out = f"""<!DOCTYPE html>
@@ -327,44 +383,192 @@ def generate_html(data_dir, manifest_path):
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 * {{ box-sizing: border-box; }}
-body {{
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #0b0f14;
-  color: #e6edf3;
+:root {{
+  color-scheme: dark;
+  --page: #0b0e13;
+  --panel: #11151c;
+  --panel-2: #171c24;
+  --line: #242b36;
+  --line-soft: #1b222c;
+  --text: #e7ebf0;
+  --muted: #97a3b6;
+  --accent: #d3b77a;
+  --accent-soft: rgba(211, 183, 122, 0.14);
+  --danger: #ef8c86;
+  --map: #9ecbff;
 }}
+html, body {{
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}}
+body {{ padding: 24px 0 40px; }}
 .page {{
-  width: min(1400px, calc(100% - 40px));
+  width: min(1360px, calc(100% - 28px));
   margin: 0 auto;
-  padding: 28px 0 48px;
+}}
+.topbar {{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}}
+.brand {{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}}
+.eyebrow {{
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+}}
+.top-actions {{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}}
+.chip, .link-chip, .toggle button {{
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font: inherit;
+  text-decoration: none;
+}}
+.link-chip:hover, .toggle button:hover {{ background: var(--panel-2); }}
+.toggle {{
+  display: inline-flex;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+}}
+.toggle button {{
+  border: none;
+  padding: 8px 12px;
+  background: transparent;
+  color: var(--muted);
+}}
+.toggle button.active {{
+  background: var(--accent-soft);
+  color: var(--text);
 }}
 .hero {{
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 18px;
+}}
+.hero-main, .hero-side, .section {{
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+}}
+.hero-main {{
+  padding: 30px;
+  min-height: 280px;
+}}
+.hero-main h1 {{
+  margin: 10px 0 14px;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: clamp(2.1rem, 5vw, 4rem);
+  line-height: 1.02;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}}
+.hero-main p {{
+  max-width: 52rem;
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  margin: 0;
+}}
+.hero-side {{
   padding: 24px;
-  border: 1px solid #30363d;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}}
+.callout {{
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  border: 1px solid var(--line-soft);
+}}
+.callout strong {{
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.98rem;
+}}
+.muted-callout {{
+  color: var(--muted);
+  border-style: dashed;
+}}
+.section {{
+  margin-top: 18px;
+  padding: 22px;
+}}
+.section-header {{
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 14px;
+}}
+.section-title {{
+  margin: 0;
+  font-size: 1.2rem;
+}}
+.section-copy {{
+  color: var(--muted);
+  max-width: 48rem;
+  line-height: 1.6;
+  margin: 0;
+}}
+.stats {{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}}
+.stat-card {{
+  border: 1px solid var(--line-soft);
   border-radius: 18px;
-  background: linear-gradient(140deg, rgba(88,166,255,0.14), rgba(99,46,160,0.18));
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
 }}
-.hero h1 {{ margin: 0 0 8px; font-size: 2rem; }}
-.hero p {{ margin: 0; color: #c9d1d9; line-height: 1.6; max-width: 960px; }}
-.section {{ margin-top: 22px; padding: 20px; border: 1px solid #30363d; border-radius: 18px; background: #11161d; }}
-.section h2 {{ margin: 0 0 14px; font-size: 1.2rem; }}
-.grid {{ display: grid; gap: 14px; }}
-.cards {{ grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }}
-.card {{
-  padding: 16px;
-  border-radius: 14px;
-  background: #0d1117;
-  border: 1px solid #30363d;
+.stat-value {{
+  margin-top: 10px;
+  font-size: 1.45rem;
+  line-height: 1.25;
+  font-weight: 650;
 }}
-.card-label {{ font-size: 0.78rem; color: #8b949e; text-transform: uppercase; letter-spacing: 0.06em; }}
-.card-value {{ margin-top: 8px; font-size: 1.3rem; font-weight: 700; line-height: 1.3; }}
-.card-note {{ margin-top: 6px; font-size: 0.82rem; color: #8b949e; }}
-.muted {{ color: #8b949e; }}
-.muted-block {{
-  padding: 14px;
-  border: 1px dashed #30363d;
-  border-radius: 12px;
-  color: #8b949e;
+.stat-note {{
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}}
+.two-col {{
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 16px;
+}}
+.three-col {{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}}
+#map {{
+  height: 560px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--line-soft);
 }}
 table {{
   width: 100%;
@@ -372,34 +576,19 @@ table {{
   font-size: 0.92rem;
 }}
 th, td {{
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--line-soft);
   text-align: left;
-  padding: 10px 12px;
-  border-bottom: 1px solid #21262d;
   vertical-align: top;
 }}
 th {{
-  color: #8b949e;
-  font-size: 0.75rem;
+  color: var(--muted);
+  font-size: 0.76rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  font-weight: 600;
 }}
-.bar-cell {{
-  display: grid;
-  grid-template-columns: 76px 1fr;
-  gap: 10px;
-  align-items: center;
-}}
-.bar {{
-  height: 8px;
-  border-radius: 999px;
-  background: #1f2937;
-  overflow: hidden;
-}}
-.bar > div {{
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #58a6ff, #3fb950);
-}}
+tr:hover td {{ background: rgba(255,255,255,0.015); }}
 .dot {{
   display: inline-block;
   width: 10px;
@@ -407,11 +596,42 @@ th {{
   border-radius: 50%;
   margin-right: 8px;
 }}
-#map {{ height: 540px; border-radius: 16px; overflow: hidden; }}
-.two-col {{
+.bar-cell {{
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 18px;
+  grid-template-columns: 84px 1fr;
+  gap: 10px;
+  align-items: center;
+}}
+.bar {{
+  height: 7px;
+  border-radius: 999px;
+  background: #1c232d;
+  overflow: hidden;
+}}
+.bar > div {{
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), #76a7d8);
+}}
+.link-list {{
+  display: grid;
+  gap: 10px;
+}}
+.file-link {{
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  color: var(--text);
+  text-decoration: none;
+  background: rgba(255,255,255,0.015);
+}}
+.file-link:hover {{ background: var(--panel-2); }}
+.file-link span:last-child {{
+  color: var(--muted);
+  white-space: nowrap;
 }}
 .schema-grid {{
   display: grid;
@@ -419,136 +639,238 @@ th {{
   gap: 12px;
 }}
 .schema-card {{
-  padding: 14px;
-  border-radius: 12px;
-  background: #0d1117;
-  border: 1px solid #30363d;
+  padding: 16px;
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.015);
 }}
 .schema-card code {{
   display: block;
   white-space: pre-wrap;
   word-break: break-word;
-  color: #9ecbff;
-  font-size: 0.8rem;
+  color: var(--map);
+  font-size: 0.78rem;
+  line-height: 1.5;
 }}
-.error-item {{
+.log-item {{
   display: grid;
-  grid-template-columns: 52px 1fr;
+  grid-template-columns: 56px 1fr;
   gap: 12px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(248,81,73,0.3);
-  background: rgba(248,81,73,0.08);
+  padding: 12px 14px;
   margin-bottom: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(239, 140, 134, 0.26);
+  background: rgba(239, 140, 134, 0.07);
 }}
-.error-count {{
-  font-size: 1.1rem;
+.log-count {{
+  color: var(--danger);
+  font-size: 1.15rem;
   font-weight: 700;
-  color: #ffb3ad;
 }}
-@media (max-width: 980px) {{
-  .page {{ width: min(100% - 20px, 1400px); }}
-  .two-col {{ grid-template-columns: 1fr; }}
-  #map {{ height: 420px; }}
+code {{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}}
+.footer-note {{
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}}
+@media (max-width: 1080px) {{
+  .hero, .two-col, .three-col {{ grid-template-columns: 1fr; }}
+  #map {{ height: 440px; }}
 }}
 </style>
 </head>
 <body>
 <div class="page">
+  <header class="topbar">
+    <div class="brand">
+      <div class="eyebrow">American Solar Challenge 2026</div>
+      <div>This portfolio is built from the Git-tracked archive, not from a hidden local-only data folder.</div>
+    </div>
+    <div class="top-actions">
+      <span class="chip">Portable archive</span>
+      <div class="toggle" aria-label="Unit system">
+        <button id="metric-toggle" class="active" type="button">Metric</button>
+        <button id="imperial-toggle" type="button">Imperial</button>
+      </div>
+    </div>
+  </header>
+
   <section class="hero">
-    <h1>ASC 2026 Data Portfolio</h1>
-    <p>
-      This page turns the full American Solar Challenge capture into something browsable: the
-      tracked archival dataset, team route coverage, weather context, approved road pins, capture
-      cadence by day, and the collector log that explains how the scrape behaved while the race
-      was live.
-    </p>
+    <div class="hero-main">
+      <div class="eyebrow">ASC 2026 Data Portfolio</div>
+      <h1>One clean handoff for the full race capture.</h1>
+      <p>
+        This page is meant to answer the teammate question fast: what was collected, how much of it exists,
+        how trustworthy it looks, and where to open the raw files next. The Git repo now carries a portable
+        archival dataset, daily coverage summaries, team metrics, and a restore path back to a working raw layout.
+      </p>
+    </div>
+    <aside class="hero-side">
+      {"".join(f'<div class="callout"><strong>{html.escape(item["title"])}</strong>{html.escape(item["body"])}</div>' for item in sections)}
+    </aside>
   </section>
 
   <section class="section">
-    <h2>Archive Overview</h2>
-    <div class="grid cards">{render_cards(cards)}</div>
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Archive Snapshot</h2>
+        <p class="section-copy">A quick read on archive size, race coverage, and why the pushed Git version is enough to keep if the local runtime folder disappears.</p>
+      </div>
+    </div>
+    <div class="stats">{render_cards(cards)}</div>
   </section>
 
   <section class="section">
-    <h2>Route Overview</h2>
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Open These First</h2>
+        <p class="section-copy">These are the files a teammate can open in order to understand the archive without knowing the collector internals.</p>
+      </div>
+    </div>
+    <div class="link-list">
+      {"".join(f'<a class="file-link" href="{html.escape(link)}"><span>{html.escape(title)}</span><span>{html.escape(link)}</span></a>' for title, link in quick_links)}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Route Overview</h2>
+        <p class="section-copy">Simplified team routes and approved pins from the tracked archive. This is a visual index, while the CSVs and compressed raw files remain the source material.</p>
+      </div>
+    </div>
     <div id="map"></div>
-  </section>
-
-  <section class="section">
-    <h2>Daily Coverage</h2>
-    <table>
-      <thead>
-        <tr><th>Day</th><th>Updates</th><th>Snapshots</th><th>Weather</th><th>Pins</th></tr>
-      </thead>
-      <tbody>{render_daily_rows(daily_counts)}</tbody>
-    </table>
-  </section>
-
-  <section class="section">
-    <h2>Team Route Metrics</h2>
-    <table>
-      <thead>
-        <tr><th>Team</th><th>Samples</th><th>Distance km</th><th>Elapsed</th><th>Active ratio</th><th>Max speed</th><th>Anomalies</th></tr>
-      </thead>
-      <tbody>{render_team_rows(teams)}</tbody>
-    </table>
   </section>
 
   <section class="section two-col">
     <div>
-      <h2>Weather Context</h2>
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Daily Coverage</h2>
+          <p class="section-copy">How much data landed on each race day, broken out by updates, snapshots, weather samples, and approved pins.</p>
+        </div>
+      </div>
       <table>
         <thead>
-          <tr><th>Day</th><th>Samples</th><th>Min</th><th>Avg</th><th>Max</th><th>Avg wind</th><th>Typical sky</th></tr>
+          <tr><th>Day</th><th>Updates</th><th>Snapshots</th><th>Weather</th><th>Pins</th></tr>
+        </thead>
+        <tbody>{render_daily_rows(daily_counts)}</tbody>
+      </table>
+    </div>
+    <div>
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Weather Context</h2>
+          <p class="section-copy">Daily temperature and wind summary from the archived Open-Meteo samples.</p>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Day</th><th>Samples</th><th>Min</th><th>Avg</th><th>Max</th><th>Wind</th><th>Sky</th></tr>
         </thead>
         <tbody>{render_weather_rows(weather_daily)}</tbody>
       </table>
     </div>
+  </section>
+
+  <section class="section two-col">
     <div>
-      <h2>Collector Log Signals</h2>
-      <div class="grid cards">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Team Route Metrics</h2>
+          <p class="section-copy">Derived local route math from the captured coordinates. Useful for comparisons, but not a substitute for official ASC progress scoring.</p>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Team</th><th>Samples</th><th>Route</th><th>Moving pace</th><th>Top speed</th><th>Elapsed</th><th>Active</th><th>Alerts</th></tr>
+        </thead>
+        <tbody>{render_team_rows(teams)}</tbody>
+      </table>
+    </div>
+    <div>
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Collector Signals</h2>
+          <p class="section-copy">The archived log is part of the portable package, so collection behavior can be reviewed later instead of being trapped in one local machine.</p>
+        </div>
+      </div>
+      <div class="stats">
         {render_cards([
-            {"label": "First log line", "value": log_summary["first_ts"] or "N/A", "note": "Collector startup"},
-            {"label": "Last log line", "value": log_summary["last_ts"] or "N/A", "note": "Archive packaging tail"},
-            {"label": "Reconnect attempts", "value": fmt_int(log_summary["reconnects"]), "note": "Websocket reconnect loops"},
-            {"label": "Snapshot log entries", "value": fmt_int(log_summary["snapshot_logs"]), "note": "Saved trace snapshots"},
-            {"label": "Weather log entries", "value": fmt_int(log_summary["weather_logs"]), "note": "Weather fetch cadence"},
-            {"label": "Log levels", "value": ", ".join(f"{k}:{v}" for k, v in sorted(log_summary["levels"].items())) or "N/A", "note": "INFO / DEBUG / ERROR mix"},
+            {"label": "First log line", "value": html.escape(log_summary["first_ts"] or "N/A"), "note": "Collector startup"},
+            {"label": "Last log line", "value": html.escape(log_summary["last_ts"] or "N/A"), "note": "Final archived line"},
+            {"label": "Reconnect attempts", "value": fmt_int(log_summary["reconnects"]), "note": "Websocket retries"},
+            {"label": "Snapshot logs", "value": fmt_int(log_summary["snapshot_logs"]), "note": "Saved trace snapshots"},
+            {"label": "Weather logs", "value": fmt_int(log_summary["weather_logs"]), "note": "Weather fetch cadence"},
+            {"label": "Log levels", "value": html.escape(", ".join(f"{k}:{v}" for k, v in sorted(log_summary["levels"].items())) or "N/A"), "note": "INFO / DEBUG / ERROR mix"},
         ])}
       </div>
       <div style="margin-top:14px">
-        <h2 style="font-size:1rem;margin-bottom:10px">Unexpected Error Samples</h2>
+        <div class="eyebrow" style="margin-bottom:10px">Unexpected error samples</div>
         {render_log_errors(log_summary)}
       </div>
     </div>
   </section>
 
   <section class="section">
-    <h2>Data Components</h2>
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Data Components</h2>
+        <p class="section-copy">A cold-start schema skim for someone seeing these files for the first time.</p>
+      </div>
+    </div>
     <div class="schema-grid">
-      <div class="schema-card"><div class="card-label">Update record fields</div><code>{html.escape(json.dumps(sorted(sample_update.keys()), indent=2))}</code></div>
-      <div class="schema-card"><div class="card-label">Snapshot record fields</div><code>{html.escape(json.dumps(sorted(sample_snapshot.keys()), indent=2))}</code></div>
-      <div class="schema-card"><div class="card-label">Snapshot tracker fields</div><code>{html.escape(json.dumps(sorted(sample_tracker.keys()), indent=2))}</code></div>
-      <div class="schema-card"><div class="card-label">Weather record fields</div><code>{html.escape(json.dumps(sorted(sample_weather.keys()), indent=2))}</code></div>
-      <div class="schema-card"><div class="card-label">Pin fields</div><code>{html.escape(json.dumps(sorted(sample_pin.keys()), indent=2))}</code></div>
+      <div class="schema-card"><div class="eyebrow">Update fields</div><code>{html.escape(json.dumps(sorted(sample_update.keys()), indent=2))}</code></div>
+      <div class="schema-card"><div class="eyebrow">Snapshot fields</div><code>{html.escape(json.dumps(sorted(sample_snapshot.keys()), indent=2))}</code></div>
+      <div class="schema-card"><div class="eyebrow">Tracker fields</div><code>{html.escape(json.dumps(sorted(sample_tracker.keys()), indent=2))}</code></div>
+      <div class="schema-card"><div class="eyebrow">Weather fields</div><code>{html.escape(json.dumps(sorted(sample_weather.keys()), indent=2))}</code></div>
+      <div class="schema-card"><div class="eyebrow">Pin fields</div><code>{html.escape(json.dumps(sorted(sample_pin.keys()), indent=2))}</code></div>
     </div>
   </section>
 
   <section class="section">
-    <h2>Tracked Archive Inventory</h2>
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Tracked Archive Inventory</h2>
+        <p class="section-copy">Every compressed package committed to Git, with record counts and size reduction.</p>
+      </div>
+    </div>
     <table>
       <thead>
         <tr><th>Kind</th><th>Date</th><th>Archive file</th><th>Records</th><th>Original size</th><th>Archive size</th></tr>
       </thead>
       <tbody>{render_manifest_rows(manifest)}</tbody>
     </table>
+    <p class="footer-note" style="margin-top:14px">
+      Snapshot objects are preserved losslessly in the daily JSONL archives. Restored snapshot files may not match the original pretty-printed whitespace byte-for-byte, but the actual JSON content is preserved.
+    </p>
   </section>
 </div>
 
 <script>
 const MAP_TEAMS = {json.dumps(map_payload)};
 const MAP_PINS = {json.dumps(pin_payload)};
+let unitSystem = "metric";
+
+function applyUnits() {{
+  document.querySelectorAll(".unit-value").forEach(node => {{
+    node.textContent = node.dataset[unitSystem];
+  }});
+  document.getElementById("metric-toggle").classList.toggle("active", unitSystem === "metric");
+  document.getElementById("imperial-toggle").classList.toggle("active", unitSystem === "imperial");
+}}
+
+document.getElementById("metric-toggle").addEventListener("click", () => {{
+  unitSystem = "metric";
+  applyUnits();
+}});
+document.getElementById("imperial-toggle").addEventListener("click", () => {{
+  unitSystem = "imperial";
+  applyUnits();
+}});
+
 const map = L.map("map", {{ zoomControl: true }});
 L.tileLayer("https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png", {{
   maxZoom: 19,
@@ -561,17 +883,18 @@ MAP_TEAMS.forEach(team => {{
   if (!latlngs.length) return;
   L.polyline(latlngs, {{
     color: team.color,
-    weight: 3,
-    opacity: 0.8
+    weight: 2.8,
+    opacity: 0.78
   }}).bindTooltip(team.name, {{sticky: true}}).addTo(map);
   latlngs.forEach(latlng => bounds.extend(latlng));
 }});
+
 MAP_PINS.forEach(pin => {{
   if (pin.lat == null || pin.lng == null) return;
   const marker = L.circleMarker([pin.lat, pin.lng], {{
-    radius: 6,
-    color: pin.color || "orange",
-    fillColor: pin.color || "orange",
+    radius: 5.5,
+    color: pin.color || "#d3b77a",
+    fillColor: pin.color || "#d3b77a",
     fillOpacity: 0.9,
     weight: 2
   }});
@@ -585,6 +908,8 @@ if (bounds.isValid()) {{
 }} else {{
   map.setView([39.5, -98.35], 4);
 }}
+
+applyUnits();
 </script>
 </body>
 </html>

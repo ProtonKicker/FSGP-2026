@@ -1,0 +1,77 @@
+{
+  "created_at": "2026-10-17T17:38:01.132514+00:00",
+  "totals": {
+    "package_count": 31,
+    "record_count": 2301877,
+    "original_bytes": 347383172,
+    "archived_bytes": 14593497
+  },
+  "coverage_dates": [
+    "2026-07-25",
+    "2026-07-26",
+    "2026-07-27",
+    "2026-07-28",
+    "2026-07-29",
+    "2026-07-30",
+    "2026-07-31",
+    "2026-08-01"
+  ],
+  "team_count": 19,
+  "top_teams_by_distance_km": [
+    {
+      "team_name": "#30 Delft",
+      "route_distance_km": 3631.2,
+      "anomaly_count": 23
+    },
+    {
+      "team_name": "#8 KU Leuven",
+      "route_distance_km": 3486.6,
+      "anomaly_count": 39
+    },
+    {
+      "team_name": "#92 ETS",
+      "route_distance_km": 3279.6,
+      "anomaly_count": 18
+    },
+    {
+      "team_name": "#55 Poly Montreal",
+      "route_distance_km": 2774.4,
+      "anomaly_count": 21
+    },
+    {
+      "team_name": "#828 App State",
+      "route_distance_km": 2665.1,
+      "anomaly_count": 14
+    },
+    {
+      "team_name": "#16 Stanford",
+      "route_distance_km": 2494.0,
+      "anomaly_count": 8
+    },
+    {
+      "team_name": "#86 Washington",
+      "route_distance_km": 2321.7,
+      "anomaly_count": 11
+    },
+    {
+      "team_name": "#24 Waterloo",
+      "route_distance_km": 2270.3,
+      "anomaly_count": 7
+    },
+    {
+      "team_name": "#49 Georgia Tech",
+      "route_distance_km": 2180.9,
+      "anomaly_count": 1
+    },
+    {
+      "team_name": "#79 Florida Polytech",
+      "route_distance_km": 2078.6,
+      "anomaly_count": 6
+    }
+  ],
+  "notes": [
+    "dataset/raw is the portable source of truth committed to Git.",
+    "restore_dataset.py can recreate a working raw folder from the tracked archive.",
+    "Snapshot JSON objects are preserved losslessly, though restored formatting may differ from the original pretty-printed files."
+  ]
+}

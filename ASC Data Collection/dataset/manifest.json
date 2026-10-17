@@ -269,14 +269,14 @@
     {
       "kind": "snapshots",
       "date": "2026-07-25",
-      "source_file_count": 11,
+      "source_file_count": 1,
       "source_file_first": "data/traces_2026-07-25T23-57-52.json",
-      "source_file_last": "traces_2026-07-25T23-40-40.json",
+      "source_file_last": "data/traces_2026-07-25T23-57-52.json",
       "output_file": "raw/snapshots/snapshots_2026-07-25.jsonl.gz",
-      "record_count": 11,
-      "original_bytes": 91586,
-      "archived_bytes": 3001,
-      "source_sha256": "7ea018f22faef0261fee863bd9ad4c6cf0b95d855cf63c4441f08ebb8a8e67c9"
+      "record_count": 1,
+      "original_bytes": 8345,
+      "archived_bytes": 1230,
+      "source_sha256": "449d25b24cbb659ca5ba0575db7695e17900ac460901d9a57dfdb9fbd3a069cf"
     },
     {
       "kind": "snapshots",
@@ -377,9 +377,9 @@
   ],
   "totals": {
     "package_count": 31,
-    "record_count": 2301887,
-    "original_bytes": 347466413,
-    "archived_bytes": 14595268
+    "record_count": 2301877,
+    "original_bytes": 347383172,
+    "archived_bytes": 14593497
   },
-  "created_at": "2026-10-17T17:18:45.468082+00:00"
+  "created_at": "2026-10-17T17:38:01.132514+00:00"
 }
