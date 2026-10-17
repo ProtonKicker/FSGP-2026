@@ -9,17 +9,17 @@
 <style>
 * { box-sizing: border-box; }
 :root {
-  color-scheme: dark;
-  --page: #0b0e13;
-  --panel: #11151c;
-  --panel-2: #171c24;
-  --line: #242b36;
-  --line-soft: #1b222c;
-  --text: #e7ebf0;
-  --muted: #97a3b6;
-  --accent: #d3b77a;
-  --accent-soft: rgba(211,183,122,0.15);
-  --danger: #ef8c86;
+  color-scheme: light;
+  --page: #f5f2eb;
+  --panel: #fffdf8;
+  --panel-2: #f3eee5;
+  --line: #d7d0c3;
+  --line-soft: #e7e0d3;
+  --text: #231f18;
+  --muted: #746b5f;
+  --accent: #b48a3c;
+  --accent-soft: rgba(180,138,60,0.12);
+  --danger: #c85f56;
 }
 html, body {
   margin: 0;
@@ -118,7 +118,7 @@ body { padding: 22px 0 40px; }
   padding: 16px;
   border-radius: 18px;
   border: 1px solid var(--line-soft);
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  background: linear-gradient(180deg, rgba(180,138,60,0.03), transparent);
 }
 .stat-value {
   margin-top: 8px;
@@ -170,7 +170,7 @@ body { padding: 22px 0 40px; }
 .route-controls, .route-panel {
   border: 1px solid var(--line-soft);
   border-radius: 18px;
-  background: rgba(255,255,255,0.015);
+  background: rgba(255,255,255,0.7);
 }
 .route-controls {
   padding: 14px;
@@ -204,10 +204,10 @@ body { padding: 22px 0 40px; }
   overflow: hidden;
   border: 1px solid var(--line-soft);
   background:
-    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
-    radial-gradient(circle at top, rgba(211,183,122,0.10), transparent 55%),
-    #0d1117;
+    linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px),
+    radial-gradient(circle at top, rgba(180,138,60,0.08), transparent 55%),
+    #f8f4ec;
   background-size: 48px 48px, 48px 48px, auto, auto;
 }
 .route-bottom {
@@ -239,7 +239,7 @@ body { padding: 22px 0 40px; }
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 10px;
-  background: rgba(255,255,255,0.015);
+  background: rgba(255,255,255,0.75);
 }
 .summary-label {
   color: var(--muted);
@@ -266,7 +266,7 @@ body { padding: 22px 0 40px; }
 .team-chip, .anomaly-item {
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: rgba(255,255,255,0.015);
+  background: rgba(255,255,255,0.75);
   padding: 10px;
   cursor: pointer;
 }
@@ -286,8 +286,8 @@ body { padding: 22px 0 40px; }
   color: var(--muted);
   font-size: 0.76rem;
 }
-.anomaly-item { border-color: rgba(239,140,134,0.25); }
-.anomaly-title { font-weight: 650; color: #ffb3ad; margin-bottom: 4px; }
+.anomaly-item { border-color: rgba(200,95,86,0.20); }
+.anomaly-title { font-weight: 650; color: var(--danger); margin-bottom: 4px; }
 .topline {
   display: flex;
   gap: 16px;
@@ -324,7 +324,7 @@ th {
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
-tr:hover td { background: rgba(255,255,255,0.015); }
+tr:hover td { background: rgba(180,138,60,0.05); }
 .bar-cell {
   display: grid;
   grid-template-columns: 84px 1fr;
@@ -334,7 +334,7 @@ tr:hover td { background: rgba(255,255,255,0.015); }
 .bar {
   height: 7px;
   border-radius: 999px;
-  background: #1c232d;
+  background: #ece5d8;
   overflow: hidden;
 }
 .bar > div {
@@ -346,14 +346,14 @@ tr:hover td { background: rgba(255,255,255,0.015); }
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.85);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.45);
+  border: 2px solid rgba(255,255,255,0.95);
+  box-shadow: 0 0 0 1px rgba(35,31,24,0.22);
 }
 .tracker-marker.focused {
   width: 20px;
   height: 20px;
   border-width: 3px;
-  box-shadow: 0 0 0 2px rgba(255,255,255,0.6);
+  box-shadow: 0 0 0 2px rgba(35,31,24,0.22);
 }
 code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 @media (max-width: 1180px) {
@@ -392,7 +392,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
       <div>
         <div class="eyebrow">ASC data collection</div>
         <h1>One page for the archive, field status, and route replay.</h1>
-        <p>Portable archive, current snapshot table, and full route explorer in one handoff view.</p>
+        <p>Archive overview, current field status, and route replay in one place.</p>
         <div class="stats">
         <article class="stat-card">
           <div class="eyebrow">Tracked archive</div>
@@ -439,7 +439,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
     <div class="section-header">
       <div>
         <h2 class="section-title">Route Explorer</h2>
-        <p class="section-copy">Replay, focus, compare, and inspect anomalies without any external map API.</p>
+        <p class="section-copy">Replay, focus, compare, inspect.</p>
       </div>
     </div>
     <div class="route-layout">
@@ -522,7 +522,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
     <div class="section-header">
       <div>
         <h2 class="section-title">Current Field Status</h2>
-        <p class="section-copy">Latest snapshot table, plus latest archived weather.</p>
+        <p class="section-copy">Latest snapshot plus latest archived weather.</p>
       </div>
     </div>
     <div class="topline" id="weather-inline"></div>
@@ -550,7 +550,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
       <div class="section-header">
         <div>
           <h2 class="section-title">Daily Coverage</h2>
-          <p class="section-copy">Updates, snapshots, weather, and approved pins by day.</p>
+          <p class="section-copy">Coverage by day.</p>
         </div>
       </div>
       <table>
@@ -668,7 +668,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
       <div class="section-header">
         <div>
           <h2 class="section-title">Weather Summary</h2>
-          <p class="section-copy">Daily weather rollup from archived samples.</p>
+          <p class="section-copy">Daily weather.</p>
         </div>
       </div>
       <table>
@@ -754,301 +754,23 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
     <div>
       <div class="section-header">
         <div>
-          <h2 class="section-title">Archive Inventory</h2>
-          <p class="section-copy">Everything committed to Git.</p>
+          <h2 class="section-title">Portable Files</h2>
+          <p class="section-copy">The files teammates actually need.</p>
         </div>
       </div>
-      <table>
-        <thead>
-          <tr><th>Kind</th><th>Date</th><th>Archive file</th><th>Records</th><th>Original size</th><th>Archive size</th></tr>
-        </thead>
-        <tbody>
-            <tr>
-              <td>collector_log</td>
-              <td>2026-07-26_to_2026-08-01</td>
-              <td><code>raw/logs/collector_2026-07-26_to_2026-08-01.log.gz</code></td>
-              <td>2,035,789</td>
-              <td>123.6 MB</td>
-              <td>6.9 MB</td>
-            </tr>
-            
-            <tr>
-              <td>pins</td>
-              <td>2026-07-26</td>
-              <td><code>raw/pins/pins_2026-07-26.json</code></td>
-              <td>2</td>
-              <td>802.0 B</td>
-              <td>802.0 B</td>
-            </tr>
-            
-            <tr>
-              <td>pins</td>
-              <td>2026-07-27</td>
-              <td><code>raw/pins/pins_2026-07-27.json</code></td>
-              <td>3</td>
-              <td>1.1 KB</td>
-              <td>1.1 KB</td>
-            </tr>
-            
-            <tr>
-              <td>pins</td>
-              <td>2026-07-28</td>
-              <td><code>raw/pins/pins_2026-07-28.json</code></td>
-              <td>2</td>
-              <td>786.0 B</td>
-              <td>786.0 B</td>
-            </tr>
-            
-            <tr>
-              <td>pins</td>
-              <td>2026-07-29</td>
-              <td><code>raw/pins/pins_2026-07-29.json</code></td>
-              <td>4</td>
-              <td>1.4 KB</td>
-              <td>1.4 KB</td>
-            </tr>
-            
-            <tr>
-              <td>pins</td>
-              <td>2026-07-30</td>
-              <td><code>raw/pins/pins_2026-07-30.json</code></td>
-              <td>3</td>
-              <td>1.1 KB</td>
-              <td>1.1 KB</td>
-            </tr>
-            
-            <tr>
-              <td>pins</td>
-              <td>2026-07-31</td>
-              <td><code>raw/pins/pins_2026-07-31.json</code></td>
-              <td>3</td>
-              <td>1.1 KB</td>
-              <td>1.1 KB</td>
-            </tr>
-            
-            <tr>
-              <td>pins</td>
-              <td>2026-08-01</td>
-              <td><code>raw/pins/pins_2026-08-01.json</code></td>
-              <td>4</td>
-              <td>1.5 KB</td>
-              <td>1.5 KB</td>
-            </tr>
-            
-            <tr>
-              <td>snapshots</td>
-              <td>2026-07-25</td>
-              <td><code>raw/snapshots/snapshots_2026-07-25.jsonl.gz</code></td>
-              <td>11</td>
-              <td>8.1 KB</td>
-              <td>2.9 KB</td>
-            </tr>
-            
-            <tr>
-              <td>snapshots</td>
-              <td>2026-07-26</td>
-              <td><code>raw/snapshots/snapshots_2026-07-26.jsonl.gz</code></td>
-              <td>4,399</td>
-              <td>35.0 MB</td>
-              <td>471.5 KB</td>
-            </tr>
-            
-            <tr>
-              <td>snapshots</td>
-              <td>2026-07-27</td>
-              <td><code>raw/snapshots/snapshots_2026-07-27.jsonl.gz</code></td>
-              <td>1,713</td>
-              <td>18.2 MB</td>
-              <td>519.8 KB</td>
-            </tr>
-            
-            <tr>
-              <td>snapshots</td>
-              <td>2026-07-28</td>
-              <td><code>raw/snapshots/snapshots_2026-07-28.jsonl.gz</code></td>
-              <td>1,486</td>
-              <td>15.8 MB</td>
-              <td>465.2 KB</td>
-            </tr>
-            
-            <tr>
-              <td>snapshots</td>
-              <td>2026-07-29</td>
-              <td><code>raw/snapshots/snapshots_2026-07-29.jsonl.gz</code></td>
-              <td>1,716</td>
-              <td>16.0 MB</td>
-              <td>452.3 KB</td>
-            </tr>
-            
-            <tr>
-              <td>snapshots</td>
-              <td>2026-07-30</td>
-              <td><code>raw/snapshots/snapshots_2026-07-30.jsonl.gz</code></td>
-              <td>1,716</td>
-              <td>14.5 MB</td>
-              <td>423.9 KB</td>
-            </tr>
-            
-            <tr>
-              <td>snapshots</td>
-              <td>2026-07-31</td>
-              <td><code>raw/snapshots/snapshots_2026-07-31.jsonl.gz</code></td>
-              <td>1,642</td>
-              <td>13.8 MB</td>
-              <td>405.9 KB</td>
-            </tr>
-            
-            <tr>
-              <td>snapshots</td>
-              <td>2026-08-01</td>
-              <td><code>raw/snapshots/snapshots_2026-08-01.jsonl.gz</code></td>
-              <td>1,034</td>
-              <td>8.7 MB</td>
-              <td>254.2 KB</td>
-            </tr>
-            
-            <tr>
-              <td>updates</td>
-              <td>2026-07-25</td>
-              <td><code>raw/updates/updates_2026-07-25.jsonl.gz</code></td>
-              <td>848</td>
-              <td>267.9 KB</td>
-              <td>14.5 KB</td>
-            </tr>
-            
-            <tr>
-              <td>updates</td>
-              <td>2026-07-26</td>
-              <td><code>raw/updates/updates_2026-07-26.jsonl.gz</code></td>
-              <td>36,512</td>
-              <td>12.5 MB</td>
-              <td>597.9 KB</td>
-            </tr>
-            
-            <tr>
-              <td>updates</td>
-              <td>2026-07-27</td>
-              <td><code>raw/updates/updates_2026-07-27.jsonl.gz</code></td>
-              <td>42,061</td>
-              <td>14.4 MB</td>
-              <td>664.7 KB</td>
-            </tr>
-            
-            <tr>
-              <td>updates</td>
-              <td>2026-07-28</td>
-              <td><code>raw/updates/updates_2026-07-28.jsonl.gz</code></td>
-              <td>37,656</td>
-              <td>12.9 MB</td>
-              <td>612.5 KB</td>
-            </tr>
-            
-            <tr>
-              <td>updates</td>
-              <td>2026-07-29</td>
-              <td><code>raw/updates/updates_2026-07-29.jsonl.gz</code></td>
-              <td>36,191</td>
-              <td>12.3 MB</td>
-              <td>563.4 KB</td>
-            </tr>
-            
-            <tr>
-              <td>updates</td>
-              <td>2026-07-30</td>
-              <td><code>raw/updates/updates_2026-07-30.jsonl.gz</code></td>
-              <td>34,614</td>
-              <td>11.8 MB</td>
-              <td>558.0 KB</td>
-            </tr>
-            
-            <tr>
-              <td>updates</td>
-              <td>2026-07-31</td>
-              <td><code>raw/updates/updates_2026-07-31.jsonl.gz</code></td>
-              <td>33,171</td>
-              <td>11.3 MB</td>
-              <td>545.8 KB</td>
-            </tr>
-            
-            <tr>
-              <td>updates</td>
-              <td>2026-08-01</td>
-              <td><code>raw/updates/updates_2026-08-01.jsonl.gz</code></td>
-              <td>20,593</td>
-              <td>7.0 MB</td>
-              <td>338.8 KB</td>
-            </tr>
-            
-            <tr>
-              <td>weather</td>
-              <td>2026-07-26</td>
-              <td><code>raw/weather/weather_2026-07-26.jsonl.gz</code></td>
-              <td>1,431</td>
-              <td>453.9 KB</td>
-              <td>34.5 KB</td>
-            </tr>
-            
-            <tr>
-              <td>weather</td>
-              <td>2026-07-27</td>
-              <td><code>raw/weather/weather_2026-07-27.jsonl.gz</code></td>
-              <td>1,706</td>
-              <td>538.1 KB</td>
-              <td>41.4 KB</td>
-            </tr>
-            
-            <tr>
-              <td>weather</td>
-              <td>2026-07-28</td>
-              <td><code>raw/weather/weather_2026-07-28.jsonl.gz</code></td>
-              <td>1,483</td>
-              <td>469.5 KB</td>
-              <td>37.0 KB</td>
-            </tr>
-            
-            <tr>
-              <td>weather</td>
-              <td>2026-07-29</td>
-              <td><code>raw/weather/weather_2026-07-29.jsonl.gz</code></td>
-              <td>1,715</td>
-              <td>537.2 KB</td>
-              <td>39.4 KB</td>
-            </tr>
-            
-            <tr>
-              <td>weather</td>
-              <td>2026-07-30</td>
-              <td><code>raw/weather/weather_2026-07-30.jsonl.gz</code></td>
-              <td>1,711</td>
-              <td>536.5 KB</td>
-              <td>40.1 KB</td>
-            </tr>
-            
-            <tr>
-              <td>weather</td>
-              <td>2026-07-31</td>
-              <td><code>raw/weather/weather_2026-07-31.jsonl.gz</code></td>
-              <td>1,636</td>
-              <td>512.1 KB</td>
-              <td>37.9 KB</td>
-            </tr>
-            
-            <tr>
-              <td>weather</td>
-              <td>2026-08-01</td>
-              <td><code>raw/weather/weather_2026-08-01.jsonl.gz</code></td>
-              <td>1,032</td>
-              <td>322.0 KB</td>
-              <td>22.9 KB</td>
-            </tr>
-            </tbody>
-      </table>
+      <div class="hero-links">
+        <a class="file-link" href="dataset/TEAMMATE_GUIDE.md"><span>Teammate guide</span><span>dataset/TEAMMATE_GUIDE.md</span></a>
+        <a class="file-link" href="dataset/summary.json"><span>Summary JSON</span><span>dataset/summary.json</span></a>
+        <a class="file-link" href="dataset/daily_coverage.csv"><span>Daily coverage CSV</span><span>dataset/daily_coverage.csv</span></a>
+        <a class="file-link" href="dataset/team_metrics.csv"><span>Team metrics CSV</span><span>dataset/team_metrics.csv</span></a>
+        <a class="file-link" href="restore_dataset.py"><span>Restore script</span><span>restore_dataset.py</span></a>
+      </div>
     </div>
     <div>
       <div class="section-header">
         <div>
-          <h2 class="section-title">Collector Signals</h2>
-          <p class="section-copy">The log stays portable too.</p>
+          <h2 class="section-title">Collection Health</h2>
+          <p class="section-copy">High-level collector stats only.</p>
         </div>
       </div>
       <div class="stats">
@@ -1057,37 +779,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
         <article class="stat-card"><div class="eyebrow">Reconnects</div><div class="stat-value">32,541</div></article>
         <article class="stat-card"><div class="eyebrow">Snapshot logs</div><div class="stat-value">9,308</div></article>
       </div>
-      <div style="margin-top:12px">
-        <div class="log-item">
-          <div class="log-count">5</div>
-          <div>Unexpected error: [Errno 8] nodename nor servname provided, or not known</div>
-        </div>
-        
-        <div class="log-item">
-          <div class="log-count">1</div>
-          <div>Unexpected error: [Errno 2] No such file or directory: &#x27;/Users/xianliding/data/traces_2026-07-26T08-11-00.tmp&#x27;</div>
-        </div>
-        
-        <div class="log-item">
-          <div class="log-count">1</div>
-          <div>Unexpected error: [Errno 2] No such file or directory: &#x27;/Users/xianliding/data/traces_2026-07-26T08-11-02.tmp&#x27;</div>
-        </div>
-        
-        <div class="log-item">
-          <div class="log-count">1</div>
-          <div>Unexpected error: [Errno 2] No such file or directory: &#x27;/Users/xianliding/data/traces_2026-07-26T08-11-03.tmp&#x27;</div>
-        </div>
-        
-        <div class="log-item">
-          <div class="log-count">1</div>
-          <div>Unexpected error: [Errno 2] No such file or directory: &#x27;/Users/xianliding/data/traces_2026-07-26T08-11-04.tmp&#x27;</div>
-        </div>
-        
-        <div class="log-item">
-          <div class="log-count">1</div>
-          <div>Unexpected error: [Errno 2] No such file or directory: &#x27;/Users/xianliding/data/traces_2026-07-26T08-11-06.tmp&#x27;</div>
-        </div>
-        </div>
+      <div style="margin-top:12px" class="muted-text">Full log detail remains in the archive, not in the main handoff page.</div>
     </div>
   </section>
 </div>

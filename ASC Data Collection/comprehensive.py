@@ -144,17 +144,17 @@ def generate_html(data_dir, manifest_path):
 <style>
 * {{ box-sizing: border-box; }}
 :root {{
-  color-scheme: dark;
-  --page: #0b0e13;
-  --panel: #11151c;
-  --panel-2: #171c24;
-  --line: #242b36;
-  --line-soft: #1b222c;
-  --text: #e7ebf0;
-  --muted: #97a3b6;
-  --accent: #d3b77a;
-  --accent-soft: rgba(211,183,122,0.15);
-  --danger: #ef8c86;
+  color-scheme: light;
+  --page: #f5f2eb;
+  --panel: #fffdf8;
+  --panel-2: #f3eee5;
+  --line: #d7d0c3;
+  --line-soft: #e7e0d3;
+  --text: #231f18;
+  --muted: #746b5f;
+  --accent: #b48a3c;
+  --accent-soft: rgba(180,138,60,0.12);
+  --danger: #c85f56;
 }}
 html, body {{
   margin: 0;
@@ -253,7 +253,7 @@ body {{ padding: 22px 0 40px; }}
   padding: 16px;
   border-radius: 18px;
   border: 1px solid var(--line-soft);
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  background: linear-gradient(180deg, rgba(180,138,60,0.03), transparent);
 }}
 .stat-value {{
   margin-top: 8px;
@@ -305,7 +305,7 @@ body {{ padding: 22px 0 40px; }}
 .route-controls, .route-panel {{
   border: 1px solid var(--line-soft);
   border-radius: 18px;
-  background: rgba(255,255,255,0.015);
+  background: rgba(255,255,255,0.7);
 }}
 .route-controls {{
   padding: 14px;
@@ -339,10 +339,10 @@ body {{ padding: 22px 0 40px; }}
   overflow: hidden;
   border: 1px solid var(--line-soft);
   background:
-    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
-    radial-gradient(circle at top, rgba(211,183,122,0.10), transparent 55%),
-    #0d1117;
+    linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px),
+    radial-gradient(circle at top, rgba(180,138,60,0.08), transparent 55%),
+    #f8f4ec;
   background-size: 48px 48px, 48px 48px, auto, auto;
 }}
 .route-bottom {{
@@ -374,7 +374,7 @@ body {{ padding: 22px 0 40px; }}
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 10px;
-  background: rgba(255,255,255,0.015);
+  background: rgba(255,255,255,0.75);
 }}
 .summary-label {{
   color: var(--muted);
@@ -401,7 +401,7 @@ body {{ padding: 22px 0 40px; }}
 .team-chip, .anomaly-item {{
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: rgba(255,255,255,0.015);
+  background: rgba(255,255,255,0.75);
   padding: 10px;
   cursor: pointer;
 }}
@@ -421,8 +421,8 @@ body {{ padding: 22px 0 40px; }}
   color: var(--muted);
   font-size: 0.76rem;
 }}
-.anomaly-item {{ border-color: rgba(239,140,134,0.25); }}
-.anomaly-title {{ font-weight: 650; color: #ffb3ad; margin-bottom: 4px; }}
+.anomaly-item {{ border-color: rgba(200,95,86,0.20); }}
+.anomaly-title {{ font-weight: 650; color: var(--danger); margin-bottom: 4px; }}
 .topline {{
   display: flex;
   gap: 16px;
@@ -459,7 +459,7 @@ th {{
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }}
-tr:hover td {{ background: rgba(255,255,255,0.015); }}
+tr:hover td {{ background: rgba(180,138,60,0.05); }}
 .bar-cell {{
   display: grid;
   grid-template-columns: 84px 1fr;
@@ -469,7 +469,7 @@ tr:hover td {{ background: rgba(255,255,255,0.015); }}
 .bar {{
   height: 7px;
   border-radius: 999px;
-  background: #1c232d;
+  background: #ece5d8;
   overflow: hidden;
 }}
 .bar > div {{
@@ -481,14 +481,14 @@ tr:hover td {{ background: rgba(255,255,255,0.015); }}
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.85);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.45);
+  border: 2px solid rgba(255,255,255,0.95);
+  box-shadow: 0 0 0 1px rgba(35,31,24,0.22);
 }}
 .tracker-marker.focused {{
   width: 20px;
   height: 20px;
   border-width: 3px;
-  box-shadow: 0 0 0 2px rgba(255,255,255,0.6);
+  box-shadow: 0 0 0 2px rgba(35,31,24,0.22);
 }}
 code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
 @media (max-width: 1180px) {{
@@ -527,7 +527,7 @@ code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
       <div>
         <div class="eyebrow">ASC data collection</div>
         <h1>One page for the archive, field status, and route replay.</h1>
-        <p>Portable archive, current snapshot table, and full route explorer in one handoff view.</p>
+        <p>Archive overview, current field status, and route replay in one place.</p>
         <div class="stats">{render_overview_cards(manifest, snapshots, route_teams, pins, log_summary)}</div>
       </div>
       <div class="hero-links">
@@ -544,7 +544,7 @@ code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
     <div class="section-header">
       <div>
         <h2 class="section-title">Route Explorer</h2>
-        <p class="section-copy">Replay, focus, compare, and inspect anomalies without any external map API.</p>
+        <p class="section-copy">Replay, focus, compare, inspect.</p>
       </div>
     </div>
     <div class="route-layout">
@@ -627,7 +627,7 @@ code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
     <div class="section-header">
       <div>
         <h2 class="section-title">Current Field Status</h2>
-        <p class="section-copy">Latest snapshot table, plus latest archived weather.</p>
+        <p class="section-copy">Latest snapshot plus latest archived weather.</p>
       </div>
     </div>
     <div class="topline" id="weather-inline"></div>
@@ -655,7 +655,7 @@ code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
       <div class="section-header">
         <div>
           <h2 class="section-title">Daily Coverage</h2>
-          <p class="section-copy">Updates, snapshots, weather, and approved pins by day.</p>
+          <p class="section-copy">Coverage by day.</p>
         </div>
       </div>
       <table>
@@ -669,7 +669,7 @@ code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
       <div class="section-header">
         <div>
           <h2 class="section-title">Weather Summary</h2>
-          <p class="section-copy">Daily weather rollup from archived samples.</p>
+          <p class="section-copy">Daily weather.</p>
         </div>
       </div>
       <table>
@@ -685,22 +685,23 @@ code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
     <div>
       <div class="section-header">
         <div>
-          <h2 class="section-title">Archive Inventory</h2>
-          <p class="section-copy">Everything committed to Git.</p>
+          <h2 class="section-title">Portable Files</h2>
+          <p class="section-copy">The files teammates actually need.</p>
         </div>
       </div>
-      <table>
-        <thead>
-          <tr><th>Kind</th><th>Date</th><th>Archive file</th><th>Records</th><th>Original size</th><th>Archive size</th></tr>
-        </thead>
-        <tbody>{render_archive_rows(manifest)}</tbody>
-      </table>
+      <div class="hero-links">
+        <a class="file-link" href="dataset/TEAMMATE_GUIDE.md"><span>Teammate guide</span><span>dataset/TEAMMATE_GUIDE.md</span></a>
+        <a class="file-link" href="dataset/summary.json"><span>Summary JSON</span><span>dataset/summary.json</span></a>
+        <a class="file-link" href="dataset/daily_coverage.csv"><span>Daily coverage CSV</span><span>dataset/daily_coverage.csv</span></a>
+        <a class="file-link" href="dataset/team_metrics.csv"><span>Team metrics CSV</span><span>dataset/team_metrics.csv</span></a>
+        <a class="file-link" href="restore_dataset.py"><span>Restore script</span><span>restore_dataset.py</span></a>
+      </div>
     </div>
     <div>
       <div class="section-header">
         <div>
-          <h2 class="section-title">Collector Signals</h2>
-          <p class="section-copy">The log stays portable too.</p>
+          <h2 class="section-title">Collection Health</h2>
+          <p class="section-copy">High-level collector stats only.</p>
         </div>
       </div>
       <div class="stats">
@@ -709,7 +710,7 @@ code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
         <article class="stat-card"><div class="eyebrow">Reconnects</div><div class="stat-value">{portfolio.fmt_int(log_summary["reconnects"])}</div></article>
         <article class="stat-card"><div class="eyebrow">Snapshot logs</div><div class="stat-value">{portfolio.fmt_int(log_summary["snapshot_logs"])}</div></article>
       </div>
-      <div style="margin-top:12px">{portfolio.render_log_errors(log_summary)}</div>
+      <div style="margin-top:12px" class="muted-text">Full log detail remains in the archive, not in the main handoff page.</div>
     </div>
   </section>
 </div>
