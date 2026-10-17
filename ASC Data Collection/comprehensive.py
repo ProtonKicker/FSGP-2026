@@ -145,29 +145,90 @@ def generate_html(data_dir, manifest_path):
 * {{ box-sizing: border-box; }}
 :root {{
   color-scheme: light;
-  --page: #f5f2eb;
-  --panel: #fffdf8;
-  --panel-2: #f3eee5;
-  --line: #d7d0c3;
-  --line-soft: #e7e0d3;
-  --text: #231f18;
-  --muted: #746b5f;
-  --accent: #b48a3c;
-  --accent-soft: rgba(180,138,60,0.12);
-  --danger: #c85f56;
+  --bg: #F7F5F1;
+  --bg-warm: #F3EFE8;
+  --card: rgba(255, 255, 255, 0.72);
+  --card-solid: #FFFFFF;
+  --card-soft: rgba(255, 255, 255, 0.56);
+  --line: rgba(28, 27, 31, 0.08);
+  --line-soft: rgba(28, 27, 31, 0.05);
+  --text: #1C1B1F;
+  --muted: #6B6966;
+  --muted-soft: #9B9994;
+  --accent: #5B7FFF;
+  --accent-soft: rgba(91, 127, 255, 0.12);
+  --danger: #C85F56;
+  --shadow-soft: 0 2px 8px rgba(20, 20, 30, 0.04),
+                 0 10px 32px rgba(20, 20, 30, 0.06);
+  --shadow-hover: 0 4px 16px rgba(20, 20, 30, 0.06),
+                  0 18px 48px rgba(20, 20, 30, 0.09);
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 }}
 html, body {{
   margin: 0;
-  background: var(--page);
+  background: var(--bg);
   color: var(--text);
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }}
-body {{ padding: 22px 0 40px; }}
-.page {{ width: min(1380px, calc(100% - 28px)); margin: 0 auto; }}
+body {{
+  padding: 22px 0 40px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}}
+.bg-aurora {{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}}
+.blob {{
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(88px);
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+}}
+.blob-1 {{
+  width: 520px;
+  height: 520px;
+  top: -170px;
+  left: -130px;
+  background: radial-gradient(circle at 30% 30%, #E8DFFB, transparent 60%);
+}}
+.blob-2 {{
+  width: 460px;
+  height: 460px;
+  right: -90px;
+  bottom: -150px;
+  background: radial-gradient(circle at 70% 40%, #FBE7D5, transparent 60%);
+}}
+.blob-3 {{
+  width: 390px;
+  height: 390px;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 50% 50%, #DBE8FF, transparent 60%);
+  opacity: 0.35;
+}}
+.page {{
+  position: relative;
+  z-index: 1;
+  width: min(1380px, calc(100% - 28px));
+  margin: 0 auto;
+}}
 .topbar, .hero, .section {{
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 22px;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
 }}
 .topbar {{
   padding: 18px 20px;
@@ -179,14 +240,16 @@ body {{ padding: 22px 0 40px; }}
 }}
 .brand {{ display: grid; gap: 4px; }}
 .eyebrow {{
-  color: var(--muted);
+  color: var(--muted-soft);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 0.72rem;
+  font-weight: 600;
 }}
 .title {{
-  font-size: 1.65rem;
-  font-weight: 650;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }}
 .top-actions {{
   display: flex;
@@ -196,12 +259,20 @@ body {{ padding: 22px 0 40px; }}
 }}
 .chip, .link-chip, .toggle button, select, button {{
   border: 1px solid var(--line);
-  background: var(--panel-2);
+  background: rgba(255, 255, 255, 0.68);
   color: var(--text);
   border-radius: 999px;
   padding: 10px 14px;
   font: inherit;
   text-decoration: none;
+  transition: transform 320ms var(--ease-spring), box-shadow 320ms var(--ease-spring), border-color 220ms ease, background 220ms ease;
+}}
+.link-chip:hover, button:hover, select:hover {{
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}}
+.link-chip:hover, button:hover, select:hover, .team-chip:hover, .anomaly-item:hover, .file-link:hover {{
+  border-color: rgba(91, 127, 255, 0.18);
 }}
 .toggle {{
   display: inline-flex;
@@ -209,7 +280,7 @@ body {{ padding: 22px 0 40px; }}
   padding: 4px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: var(--panel-2);
+  background: rgba(255, 255, 255, 0.68);
 }}
 .toggle button {{
   border: none;
@@ -219,29 +290,30 @@ body {{ padding: 22px 0 40px; }}
 }}
 .toggle button.active {{
   background: var(--accent-soft);
-  color: var(--text);
+  color: var(--accent);
 }}
 .hero {{
-  padding: 26px;
+  padding: 30px;
   margin-bottom: 18px;
 }}
 .hero-grid {{
   display: grid;
   grid-template-columns: 1.45fr 1fr;
-  gap: 18px;
+  gap: 20px;
 }}
 .hero h1 {{
-  margin: 8px 0 12px;
-  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
-  font-size: clamp(2rem, 5vw, 3.8rem);
-  font-weight: 600;
-  line-height: 1.02;
-  letter-spacing: -0.03em;
+  margin: 10px 0 14px;
+  font-size: clamp(2.35rem, 5.3vw, 4.7rem);
+  font-weight: 800;
+  line-height: 0.93;
+  letter-spacing: -0.05em;
+  max-width: 12ch;
 }}
 .hero p, .section-copy {{
   margin: 0;
   color: var(--muted);
-  line-height: 1.6;
+  line-height: 1.68;
+  max-width: 62ch;
 }}
 .stats {{
   display: grid;
@@ -250,15 +322,16 @@ body {{ padding: 22px 0 40px; }}
   margin-top: 18px;
 }}
 .stat-card {{
-  padding: 16px;
-  border-radius: 18px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--line-soft);
-  background: linear-gradient(180deg, rgba(180,138,60,0.03), transparent);
+  background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.52));
 }}
 .stat-value {{
   margin-top: 8px;
-  font-size: 1.2rem;
-  font-weight: 650;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }}
 .hero-links {{
   display: grid;
@@ -270,13 +343,19 @@ body {{ padding: 22px 0 40px; }}
   gap: 10px;
   padding: 14px 16px;
   border: 1px solid var(--line-soft);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   color: var(--text);
   text-decoration: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.56));
+  transition: transform 320ms var(--ease-spring), box-shadow 320ms var(--ease-spring), border-color 220ms ease;
+}}
+.file-link span:first-child {{
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }}
 .file-link span:last-child {{ color: var(--muted); white-space: nowrap; }}
 .section {{
-  padding: 22px;
+  padding: 24px;
   margin-top: 18px;
 }}
 .section-header {{
@@ -286,7 +365,12 @@ body {{ padding: 22px 0 40px; }}
   gap: 12px;
   margin-bottom: 14px;
 }}
-.section-title {{ margin: 0; font-size: 1.2rem; }}
+.section-title {{
+  margin: 0;
+  font-size: 1.28rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}}
 .two-col {{
   display: grid;
   grid-template-columns: 1.2fr 1fr;
@@ -304,8 +388,9 @@ body {{ padding: 22px 0 40px; }}
 }}
 .route-controls, .route-panel {{
   border: 1px solid var(--line-soft);
-  border-radius: 18px;
-  background: rgba(255,255,255,0.7);
+  border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
 }}
 .route-controls {{
   padding: 14px;
@@ -335,14 +420,15 @@ body {{ padding: 22px 0 40px; }}
 }}
 #route-map {{
   min-height: 620px;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--line-soft);
   background:
-    linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px),
-    radial-gradient(circle at top, rgba(180,138,60,0.08), transparent 55%),
-    #f8f4ec;
+    linear-gradient(rgba(28,27,31,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28,27,31,0.04) 1px, transparent 1px),
+    radial-gradient(circle at top, rgba(91,127,255,0.08), transparent 56%),
+    radial-gradient(circle at 80% 0%, rgba(251,231,213,0.42), transparent 38%),
+    #fbf9f5;
   background-size: 48px 48px, 48px 48px, auto, auto;
 }}
 .route-bottom {{
@@ -360,10 +446,11 @@ body {{ padding: 22px 0 40px; }}
 .route-panel {{ padding: 14px; }}
 .panel-title {{
   margin: 0 0 10px;
-  color: var(--muted);
+  color: var(--muted-soft);
   font-size: 0.74rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  font-weight: 600;
 }}
 .summary-grid {{
   display: grid;
@@ -372,12 +459,12 @@ body {{ padding: 22px 0 40px; }}
 }}
 .summary-card {{
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 10px;
   background: rgba(255,255,255,0.75);
 }}
 .summary-label {{
-  color: var(--muted);
+  color: var(--muted-soft);
   font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -385,7 +472,8 @@ body {{ padding: 22px 0 40px; }}
 .summary-value {{
   margin-top: 6px;
   font-size: 1rem;
-  font-weight: 650;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }}
 .summary-note {{
   margin-top: 4px;
@@ -400,12 +488,16 @@ body {{ padding: 22px 0 40px; }}
 }}
 .team-chip, .anomaly-item {{
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: rgba(255,255,255,0.75);
   padding: 10px;
   cursor: pointer;
+  transition: transform 260ms var(--ease-spring), box-shadow 260ms var(--ease-spring), border-color 220ms ease;
 }}
-.team-chip.active {{ border-color: #58a6ff; }}
+.team-chip.active {{
+  border-color: rgba(91, 127, 255, 0.45);
+  box-shadow: 0 0 0 1px rgba(91,127,255,0.12);
+}}
 .team-chip {{
   display: grid;
   grid-template-columns: 12px 1fr auto;
@@ -434,13 +526,14 @@ body {{ padding: 22px 0 40px; }}
   gap: 2px;
 }}
 .topline-item span:first-child {{
-  color: var(--muted);
+  color: var(--muted-soft);
   font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }}
 .topline-item span:last-child {{
   font-weight: 650;
+  letter-spacing: -0.02em;
 }}
 table {{
   width: 100%;
@@ -454,12 +547,12 @@ th, td {{
   vertical-align: top;
 }}
 th {{
-  color: var(--muted);
+  color: var(--muted-soft);
   font-size: 0.74rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }}
-tr:hover td {{ background: rgba(180,138,60,0.05); }}
+tr:hover td {{ background: rgba(91,127,255,0.04); }}
 .bar-cell {{
   display: grid;
   grid-template-columns: 84px 1fr;
@@ -469,13 +562,13 @@ tr:hover td {{ background: rgba(180,138,60,0.05); }}
 .bar {{
   height: 7px;
   border-radius: 999px;
-  background: #ece5d8;
+  background: #ece9e1;
   overflow: hidden;
 }}
 .bar > div {{
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent), #76a7d8);
+  background: linear-gradient(90deg, var(--accent), #8CA9FF);
 }}
 .tracker-marker {{
   width: 12px;
@@ -501,15 +594,24 @@ code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
   .page {{ width: min(100% - 16px, 1380px); }}
   .route-controls {{ grid-template-columns: 1fr; }}
   .summary-grid {{ grid-template-columns: 1fr; }}
+  .file-link {{
+    flex-direction: column;
+    align-items: flex-start;
+  }}
 }}
 </style>
 </head>
 <body>
+<div class="bg-aurora" aria-hidden="true">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
 <div class="page">
   <header class="topbar">
     <div class="brand">
-      <div class="eyebrow">ASC 2026 comprehensive handoff</div>
-      <div class="title">Everything in one page</div>
+      <div class="eyebrow">ASC 2026 archive</div>
+      <div class="title">Comprehensive handoff</div>
     </div>
     <div class="top-actions">
       <span class="chip">Portable archive</span>
@@ -526,8 +628,8 @@ code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
     <div class="hero-grid">
       <div>
         <div class="eyebrow">ASC data collection</div>
-        <h1>One page for the archive, field status, and route replay.</h1>
-        <p>Archive overview, current field status, and route replay in one place.</p>
+        <h1>Archive, field status, and replay in one calm page.</h1>
+        <p>A light handoff view for the ASC tracker data, with the archive, current state, and replay in one place.</p>
         <div class="stats">{render_overview_cards(manifest, snapshots, route_teams, pins, log_summary)}</div>
       </div>
       <div class="hero-links">
