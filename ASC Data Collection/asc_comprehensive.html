@@ -236,6 +236,147 @@ body {
   font-weight: 650;
   letter-spacing: -0.02em;
 }
+.insight-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 16px;
+}
+.visual-panel {
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  padding: 16px;
+}
+.capture-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.capture-card {
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,255,255,0.58));
+}
+.capture-card-log {
+  grid-column: 1 / -1;
+}
+.capture-topline, .leader-main, .leader-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+}
+.capture-share {
+  color: var(--muted-soft);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.capture-value {
+  margin-top: 10px;
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  font-weight: 750;
+  letter-spacing: -0.04em;
+}
+.capture-note {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+.capture-meter, .leader-bar {
+  height: 10px;
+  margin-top: 14px;
+  border-radius: 999px;
+  background: #ece9e1;
+  overflow: hidden;
+  }
+.capture-meter > div, .leader-bar > div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), #8CA9FF);
+  }
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: 72px repeat(8, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
+}
+.heatmap-corner {
+  min-height: 44px;
+}
+.heatmap-header-cell {
+  color: var(--muted-soft);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  align-self: end;
+  padding-bottom: 4px;
+  }
+.heatmap-row-label {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  align-self: center;
+  }
+.heatmap-cell {
+  min-height: 74px;
+  border-radius: 18px;
+  border: 1px solid rgba(91,127,255,0.10);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.55)),
+    linear-gradient(180deg, rgba(91,127,255,calc(var(--strength) * 0.34)), rgba(91,127,255,calc(var(--strength) * 0.14)));
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  text-align: center;
+  }
+.heatmap-count {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  }
+.leaders-panel {
+  margin-top: 16px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  padding: 16px;
+  }
+.leader-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 16px;
+}
+.leader-row {
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.58));
+}
+.leader-name {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 650;
+}
+.leader-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+.leader-distance {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.leader-meta {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
 .two-col {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
@@ -450,7 +591,7 @@ tr:hover td { background: rgba(91,127,255,0.04); }
 }
 code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 @media (max-width: 1180px) {
-  .route-layout, .hero-grid, .two-col { grid-template-columns: 1fr; }
+  .route-layout, .hero-grid, .two-col, .insight-grid, .leader-list { grid-template-columns: 1fr; }
   .route-controls { grid-template-columns: 1fr 1fr; }
   #route-map { min-height: 460px; }
 }
@@ -459,6 +600,15 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
   .page { width: min(100% - 16px, 1380px); }
   .route-controls { grid-template-columns: 1fr; }
   .summary-grid { grid-template-columns: 1fr; }
+  .capture-grid { grid-template-columns: 1fr; }
+  .heatmap-grid {
+    grid-template-columns: 56px repeat(8, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .heatmap-cell {
+    min-height: 62px;
+    padding: 6px;
+  }
   .file-link {
     flex-direction: column;
     align-items: flex-start;
@@ -534,6 +684,345 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
         <a class="file-link" href="dataset/summary.json"><span>Summary</span><span>dataset/summary.json</span></a>
         <a class="file-link" href="dataset/team_metrics.csv"><span>Team metrics CSV</span><span>dataset/team_metrics.csv</span></a>
       </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">What Got Logged</h2>
+        <p class="section-copy">A quick visual read of the collection shape.</p>
+      </div>
+    </div>
+    <div class="insight-grid">
+      <div class="visual-panel">
+        <div class="panel-title">Capture mix</div>
+        <div class="capture-grid">
+            <article class="capture-card">
+              <div class="capture-topline">
+                <span class="eyebrow">GPS updates</span>
+                <span class="capture-share">90.8%</span>
+              </div>
+              <div class="capture-value">241,646</div>
+              <div class="capture-note">Route points</div>
+              <div class="capture-meter"><div style="width:100.0%"></div></div>
+            </article>
+            
+            <article class="capture-card">
+              <div class="capture-topline">
+                <span class="eyebrow">Snapshots</span>
+                <span class="capture-share">5.2%</span>
+              </div>
+              <div class="capture-value">13,717</div>
+              <div class="capture-note">Whole field states</div>
+              <div class="capture-meter"><div style="width:10.0%"></div></div>
+            </article>
+            
+            <article class="capture-card">
+              <div class="capture-topline">
+                <span class="eyebrow">Weather</span>
+                <span class="capture-share">4.0%</span>
+              </div>
+              <div class="capture-value">10,714</div>
+              <div class="capture-note">Conditions</div>
+              <div class="capture-meter"><div style="width:10.0%"></div></div>
+            </article>
+            
+            <article class="capture-card">
+              <div class="capture-topline">
+                <span class="eyebrow">Pins</span>
+                <span class="capture-share">0.0%</span>
+              </div>
+              <div class="capture-value">21</div>
+              <div class="capture-note">Hazards + notes</div>
+              <div class="capture-meter"><div style="width:10.0%"></div></div>
+            </article>
+            
+        <article class="capture-card capture-card-log">
+          <div class="capture-topline">
+            <span class="eyebrow">Collector log</span>
+            <span class="capture-share">always on</span>
+          </div>
+          <div class="capture-value">2,035,789</div>
+          <div class="capture-note">Reconnects, polling, write activity</div>
+          <div class="capture-meter"><div style="width:100%"></div></div>
+        </article>
+        </div>
+      </div>
+      <div class="visual-panel">
+        <div class="panel-title">Daily rhythm</div>
+        
+    <div class="heatmap-grid">
+      <div class="heatmap-corner"></div>
+      <div class="heatmap-header-cell">07/25</div><div class="heatmap-header-cell">07/26</div><div class="heatmap-header-cell">07/27</div><div class="heatmap-header-cell">07/28</div><div class="heatmap-header-cell">07/29</div><div class="heatmap-header-cell">07/30</div><div class="heatmap-header-cell">07/31</div><div class="heatmap-header-cell">08/01</div>
+      
+            <div class="heatmap-row-label">GPS</div>
+            
+                <div class="heatmap-cell" style="--strength:0.0202">
+                  <span class="heatmap-count">848</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.8681">
+                  <span class="heatmap-count">36,512</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:1.0000">
+                  <span class="heatmap-count">42,061</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.8953">
+                  <span class="heatmap-count">37,656</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.8604">
+                  <span class="heatmap-count">36,191</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.8229">
+                  <span class="heatmap-count">34,614</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.7886">
+                  <span class="heatmap-count">33,171</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.4896">
+                  <span class="heatmap-count">20,593</span>
+                </div>
+                
+            
+            <div class="heatmap-row-label">Snap</div>
+            
+                <div class="heatmap-cell" style="--strength:0.0025">
+                  <span class="heatmap-count">11</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:1.0000">
+                  <span class="heatmap-count">4,399</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.3894">
+                  <span class="heatmap-count">1,713</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.3378">
+                  <span class="heatmap-count">1,486</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.3901">
+                  <span class="heatmap-count">1,716</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.3901">
+                  <span class="heatmap-count">1,716</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.3733">
+                  <span class="heatmap-count">1,642</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.2351">
+                  <span class="heatmap-count">1,034</span>
+                </div>
+                
+            
+            <div class="heatmap-row-label">Weather</div>
+            
+                <div class="heatmap-cell" style="--strength:0.0000">
+                  <span class="heatmap-count">0</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.8344">
+                  <span class="heatmap-count">1,431</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.9948">
+                  <span class="heatmap-count">1,706</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.8647">
+                  <span class="heatmap-count">1,483</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:1.0000">
+                  <span class="heatmap-count">1,715</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.9977">
+                  <span class="heatmap-count">1,711</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.9539">
+                  <span class="heatmap-count">1,636</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.6017">
+                  <span class="heatmap-count">1,032</span>
+                </div>
+                
+            
+            <div class="heatmap-row-label">Pins</div>
+            
+                <div class="heatmap-cell" style="--strength:0.0000">
+                  <span class="heatmap-count">0</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.5000">
+                  <span class="heatmap-count">2</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.7500">
+                  <span class="heatmap-count">3</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.5000">
+                  <span class="heatmap-count">2</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:1.0000">
+                  <span class="heatmap-count">4</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.7500">
+                  <span class="heatmap-count">3</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:0.7500">
+                  <span class="heatmap-count">3</span>
+                </div>
+                
+                <div class="heatmap-cell" style="--strength:1.0000">
+                  <span class="heatmap-count">4</span>
+                </div>
+                
+            
+    </div>
+    
+      </div>
+    </div>
+    <div class="leaders-panel">
+      <div class="panel-title">Biggest route traces</div>
+      <div class="leader-list">
+            <article class="leader-row">
+              <div class="leader-main">
+                <div class="leader-name">
+                  <span class="leader-dot" style="background:#ffd8b1"></span>
+                  <span>#30 Delft</span>
+                </div>
+                <div class="leader-distance"><span class="unit-value" data-metric="3,631.2 km" data-imperial="2,256.3 mi">3,631.2 km</span></div>
+              </div>
+              <div class="leader-bar"><div style="width:100.0%; background:#ffd8b1"></div></div>
+              <div class="leader-meta">
+                <span>2,945 samples</span>
+                <span>23 alerts</span>
+              </div>
+            </article>
+            
+            <article class="leader-row">
+              <div class="leader-main">
+                <div class="leader-name">
+                  <span class="leader-dot" style="background:#dcbeff"></span>
+                  <span>#8 KU Leuven</span>
+                </div>
+                <div class="leader-distance"><span class="unit-value" data-metric="3,486.6 km" data-imperial="2,166.5 mi">3,486.6 km</span></div>
+              </div>
+              <div class="leader-bar"><div style="width:96.0%; background:#dcbeff"></div></div>
+              <div class="leader-meta">
+                <span>2,789 samples</span>
+                <span>39 alerts</span>
+              </div>
+            </article>
+            
+            <article class="leader-row">
+              <div class="leader-main">
+                <div class="leader-name">
+                  <span class="leader-dot" style="background:#469990"></span>
+                  <span>#92 ETS</span>
+                </div>
+                <div class="leader-distance"><span class="unit-value" data-metric="3,279.6 km" data-imperial="2,037.8 mi">3,279.6 km</span></div>
+              </div>
+              <div class="leader-bar"><div style="width:90.3%; background:#469990"></div></div>
+              <div class="leader-meta">
+                <span>2,682 samples</span>
+                <span>18 alerts</span>
+              </div>
+            </article>
+            
+            <article class="leader-row">
+              <div class="leader-main">
+                <div class="leader-name">
+                  <span class="leader-dot" style="background:#911eb4"></span>
+                  <span>#55 Poly Montreal</span>
+                </div>
+                <div class="leader-distance"><span class="unit-value" data-metric="2,774.4 km" data-imperial="1,723.9 mi">2,774.4 km</span></div>
+              </div>
+              <div class="leader-bar"><div style="width:76.4%; background:#911eb4"></div></div>
+              <div class="leader-meta">
+                <span>2,577 samples</span>
+                <span>21 alerts</span>
+              </div>
+            </article>
+            
+            <article class="leader-row">
+              <div class="leader-main">
+                <div class="leader-name">
+                  <span class="leader-dot" style="background:#bfef45"></span>
+                  <span>#828 App State</span>
+                </div>
+                <div class="leader-distance"><span class="unit-value" data-metric="2,665.1 km" data-imperial="1,656.0 mi">2,665.1 km</span></div>
+              </div>
+              <div class="leader-bar"><div style="width:73.4%; background:#bfef45"></div></div>
+              <div class="leader-meta">
+                <span>2,387 samples</span>
+                <span>14 alerts</span>
+              </div>
+            </article>
+            
+            <article class="leader-row">
+              <div class="leader-main">
+                <div class="leader-name">
+                  <span class="leader-dot" style="background:#f032e6"></span>
+                  <span>#16 Stanford</span>
+                </div>
+                <div class="leader-distance"><span class="unit-value" data-metric="2,494.0 km" data-imperial="1,549.7 mi">2,494.0 km</span></div>
+              </div>
+              <div class="leader-bar"><div style="width:68.7%; background:#f032e6"></div></div>
+              <div class="leader-meta">
+                <span>2,888 samples</span>
+                <span>8 alerts</span>
+              </div>
+            </article>
+            
+            <article class="leader-row">
+              <div class="leader-main">
+                <div class="leader-name">
+                  <span class="leader-dot" style="background:#4363d8"></span>
+                  <span>#86 Washington</span>
+                </div>
+                <div class="leader-distance"><span class="unit-value" data-metric="2,321.7 km" data-imperial="1,442.6 mi">2,321.7 km</span></div>
+              </div>
+              <div class="leader-bar"><div style="width:63.9%; background:#4363d8"></div></div>
+              <div class="leader-meta">
+                <span>2,519 samples</span>
+                <span>11 alerts</span>
+              </div>
+            </article>
+            
+            <article class="leader-row">
+              <div class="leader-main">
+                <div class="leader-name">
+                  <span class="leader-dot" style="background:#808000"></span>
+                  <span>#24 Waterloo</span>
+                </div>
+                <div class="leader-distance"><span class="unit-value" data-metric="2,270.3 km" data-imperial="1,410.7 mi">2,270.3 km</span></div>
+              </div>
+              <div class="leader-bar"><div style="width:62.5%; background:#808000"></div></div>
+              <div class="leader-meta">
+                <span>2,169 samples</span>
+                <span>7 alerts</span>
+              </div>
+            </article>
+            </div>
     </div>
   </section>
 

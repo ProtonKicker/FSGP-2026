@@ -109,6 +109,134 @@ def render_archive_rows(manifest):
     return "".join(rows)
 
 
+def render_capture_mix(daily_counts, log_summary):
+    totals = {
+        "GPS updates": sum(counts["updates"] for counts in daily_counts.values()),
+        "Snapshots": sum(counts["snapshots"] for counts in daily_counts.values()),
+        "Weather": sum(counts["weather"] for counts in daily_counts.values()),
+        "Pins": sum(counts["pins"] for counts in daily_counts.values()),
+    }
+    core_total = sum(totals.values()) or 1
+    max_core = max(totals.values()) or 1
+    cards = [
+        ("GPS updates", totals["GPS updates"], "Route points"),
+        ("Snapshots", totals["Snapshots"], "Whole field states"),
+        ("Weather", totals["Weather"], "Conditions"),
+        ("Pins", totals["Pins"], "Hazards + notes"),
+    ]
+    rows = []
+    for label, value, note in cards:
+        share = (value / core_total) * 100
+        width = max(10, (value / max_core) * 100) if value else 0
+        rows.append(
+            f"""
+            <article class="capture-card">
+              <div class="capture-topline">
+                <span class="eyebrow">{html.escape(label)}</span>
+                <span class="capture-share">{share:.1f}%</span>
+              </div>
+              <div class="capture-value">{portfolio.fmt_int(value)}</div>
+              <div class="capture-note">{html.escape(note)}</div>
+              <div class="capture-meter"><div style="width:{width:.1f}%"></div></div>
+            </article>
+            """
+        )
+    rows.append(
+        f"""
+        <article class="capture-card capture-card-log">
+          <div class="capture-topline">
+            <span class="eyebrow">Collector log</span>
+            <span class="capture-share">always on</span>
+          </div>
+          <div class="capture-value">{portfolio.fmt_int(log_summary["line_count"])}</div>
+          <div class="capture-note">Reconnects, polling, write activity</div>
+          <div class="capture-meter"><div style="width:100%"></div></div>
+        </article>
+        """
+    )
+    return "".join(rows)
+
+
+def render_activity_heatmap(daily_counts):
+    kinds = [
+        ("GPS", "updates"),
+        ("Snap", "snapshots"),
+        ("Weather", "weather"),
+        ("Pins", "pins"),
+    ]
+    days = list(daily_counts.keys())
+    max_by_kind = {
+        key: max((daily_counts[day][key] for day in days), default=1) or 1
+        for _, key in kinds
+    }
+
+    header = "".join(
+        f'<div class="heatmap-header-cell">{html.escape(day[5:].replace("-", "/"))}</div>'
+        for day in days
+    )
+    rows = []
+    for label, key in kinds:
+        cells = []
+        for day in days:
+            value = daily_counts[day][key]
+            strength = value / max_by_kind[key] if max_by_kind[key] else 0
+            cells.append(
+                f"""
+                <div class="heatmap-cell" style="--strength:{strength:.4f}">
+                  <span class="heatmap-count">{portfolio.fmt_int(value)}</span>
+                </div>
+                """
+            )
+        rows.append(
+            f"""
+            <div class="heatmap-row-label">{html.escape(label)}</div>
+            {''.join(cells)}
+            """
+        )
+    return f"""
+    <div class="heatmap-grid">
+      <div class="heatmap-corner"></div>
+      {header}
+      {''.join(rows)}
+    </div>
+    """
+
+
+def render_route_leaders(route_teams):
+    ranked = sorted(
+        route_teams,
+        key=lambda team: team["stats"].get("distance_km", 0),
+        reverse=True,
+    )[:8]
+    peak = max((team["stats"].get("distance_km", 0) for team in ranked), default=1) or 1
+    rows = []
+    for team in ranked:
+        stats = team["stats"]
+        distance_km = stats.get("distance_km", 0)
+        anomaly_count = stats.get("anomaly_count", 0)
+        sample_count = stats.get("sample_count", 0)
+        width = (distance_km / peak) * 100 if peak else 0
+        rows.append(
+            f"""
+            <article class="leader-row">
+              <div class="leader-main">
+                <div class="leader-name">
+                  <span class="leader-dot" style="background:{html.escape(team['color'])}"></span>
+                  <span>{html.escape(team['name'])}</span>
+                </div>
+                <div class="leader-distance">{unit_value(f"{portfolio.fmt_float(distance_km)} km", f"{portfolio.fmt_float(distance_km / 1.609344)} mi")}</div>
+              </div>
+              <div class="leader-bar"><div style="width:{width:.1f}%; background:{html.escape(team['color'])}"></div></div>
+              <div class="leader-meta">
+                <span>{portfolio.fmt_int(sample_count)} samples</span>
+                <span>{portfolio.fmt_int(anomaly_count)} alerts</span>
+              </div>
+            </article>
+            """
+        )
+    return "".join(rows)
+
+
 def generate_html(data_dir, manifest_path):
     manifest = portfolio.load_manifest(manifest_path)
     route_teams = data_access.load_updates(data_dir)
@@ -371,6 +499,147 @@ body {{
   font-weight: 650;
   letter-spacing: -0.02em;
 }}
+.insight-grid {{
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 16px;
+}}
+.visual-panel {{
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  padding: 16px;
+}}
+.capture-grid {{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}}
+.capture-card {{
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,255,255,0.58));
+}}
+.capture-card-log {{
+  grid-column: 1 / -1;
+}}
+.capture-topline, .leader-main, .leader-meta {{
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+}}
+.capture-share {{
+  color: var(--muted-soft);
+  font-size: 0.82rem;
+  font-weight: 600;
+}}
+.capture-value {{
+  margin-top: 10px;
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  font-weight: 750;
+  letter-spacing: -0.04em;
+}}
+.capture-note {{
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}}
+.capture-meter, .leader-bar {{
+  height: 10px;
+  margin-top: 14px;
+  border-radius: 999px;
+  background: #ece9e1;
+  overflow: hidden;
+  }}
+.capture-meter > div, .leader-bar > div {{
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), #8CA9FF);
+  }}
+.heatmap-grid {{
+  display: grid;
+  grid-template-columns: 72px repeat(8, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
+}}
+.heatmap-corner {{
+  min-height: 44px;
+}}
+.heatmap-header-cell {{
+  color: var(--muted-soft);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  align-self: end;
+  padding-bottom: 4px;
+  }}
+.heatmap-row-label {{
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  align-self: center;
+  }}
+.heatmap-cell {{
+  min-height: 74px;
+  border-radius: 18px;
+  border: 1px solid rgba(91,127,255,0.10);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.55)),
+    linear-gradient(180deg, rgba(91,127,255,calc(var(--strength) * 0.34)), rgba(91,127,255,calc(var(--strength) * 0.14)));
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  text-align: center;
+  }}
+.heatmap-count {{
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  }}
+.leaders-panel {{
+  margin-top: 16px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  padding: 16px;
+  }}
+.leader-list {{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 16px;
+}}
+.leader-row {{
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.58));
+}}
+.leader-name {{
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 650;
+}}
+.leader-dot {{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}}
+.leader-distance {{
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}}
+.leader-meta {{
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}}
 .two-col {{
   display: grid;
   grid-template-columns: 1.2fr 1fr;
@@ -585,7 +854,7 @@ tr:hover td {{ background: rgba(91,127,255,0.04); }}
 }}
 code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
 @media (max-width: 1180px) {{
-  .route-layout, .hero-grid, .two-col {{ grid-template-columns: 1fr; }}
+  .route-layout, .hero-grid, .two-col, .insight-grid, .leader-list {{ grid-template-columns: 1fr; }}
   .route-controls {{ grid-template-columns: 1fr 1fr; }}
   #route-map {{ min-height: 460px; }}
 }}
@@ -594,6 +863,15 @@ code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
   .page {{ width: min(100% - 16px, 1380px); }}
   .route-controls {{ grid-template-columns: 1fr; }}
   .summary-grid {{ grid-template-columns: 1fr; }}
+  .capture-grid {{ grid-template-columns: 1fr; }}
+  .heatmap-grid {{
+    grid-template-columns: 56px repeat(8, minmax(0, 1fr));
+    gap: 6px;
+  }}
+  .heatmap-cell {{
+    min-height: 62px;
+    padding: 6px;
+  }}
   .file-link {{
     flex-direction: column;
     align-items: flex-start;
@@ -639,6 +917,29 @@ code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
         <a class="file-link" href="dataset/summary.json"><span>Summary</span><span>dataset/summary.json</span></a>
         <a class="file-link" href="dataset/team_metrics.csv"><span>Team metrics CSV</span><span>dataset/team_metrics.csv</span></a>
       </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">What Got Logged</h2>
+        <p class="section-copy">A quick visual read of the collection shape.</p>
+      </div>
+    </div>
+    <div class="insight-grid">
+      <div class="visual-panel">
+        <div class="panel-title">Capture mix</div>
+        <div class="capture-grid">{render_capture_mix(daily_counts, log_summary)}</div>
+      </div>
+      <div class="visual-panel">
+        <div class="panel-title">Daily rhythm</div>
+        {render_activity_heatmap(daily_counts)}
+      </div>
+    </div>
+    <div class="leaders-panel">
+      <div class="panel-title">Biggest route traces</div>
+      <div class="leader-list">{render_route_leaders(route_teams)}</div>
     </div>
   </section>
 
