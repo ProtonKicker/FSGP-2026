@@ -22,7 +22,9 @@ from datetime import datetime
 from pathlib import Path
 from http.server import SimpleHTTPRequestHandler
 
-DEFAULT_DATA_DIR = "data"
+import data_access
+
+DEFAULT_DATA_DIR = data_access.DEFAULT_ARCHIVE_DIR
 DEFAULT_OUTPUT = "asc_trajectory.html"
 SNAPSHOT_INTERVAL = 30
 MOVING_SPEED_KPH = 3.0
@@ -1212,9 +1214,10 @@ def serve_live(data_dir, port=8899):
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.end_headers()
-                teams = load_updates(data_dir)
-                snaps = load_snapshots(data_dir)
-                pins = load_pins(data_dir)
+                resolved_dir = data_access.resolve_data_dir(data_dir)
+                teams = data_access.load_updates(resolved_dir)
+                snaps = data_access.load_snapshots(resolved_dir)
+                pins = data_access.load_pins(resolved_dir)
                 html = generate_html(teams, snaps, pins=pins, title="ASC 2026 Archive Explorer")
                 self.wfile.write(html.encode("utf-8"))
             else:
@@ -1265,18 +1268,19 @@ def main():
     )
 
     args = parser.parse_args()
+    resolved_dir = data_access.resolve_data_dir(args.dir)
 
     if args.live:
-        serve_live(args.dir, args.port)
+        serve_live(resolved_dir, args.port)
         return
 
     if args.watch:
         output_path = Path(args.output)
         print(f"Watch mode enabled. Regenerating every 30s to {output_path}")
         while True:
-            teams = load_updates(args.dir)
-            snaps = load_snapshots(args.dir)
-            pins = load_pins(args.dir)
+            teams = data_access.load_updates(resolved_dir)
+            snaps = data_access.load_snapshots(resolved_dir)
+            pins = data_access.load_pins(resolved_dir)
             html = generate_html(teams, snaps, pins=pins, team_filter=args.team)
             output_path.write_text(html)
             now = datetime.now().strftime("%H:%M:%S")
@@ -1284,9 +1288,9 @@ def main():
             std_time.sleep(30)
         return
 
-    teams = load_updates(args.dir)
-    snaps = load_snapshots(args.dir)
-    pins = load_pins(args.dir)
+    teams = data_access.load_updates(resolved_dir)
+    snaps = data_access.load_snapshots(resolved_dir)
+    pins = data_access.load_pins(resolved_dir)
     html = generate_html(teams, snaps, pins=pins, team_filter=args.team)
 
     output_path = Path(args.output)

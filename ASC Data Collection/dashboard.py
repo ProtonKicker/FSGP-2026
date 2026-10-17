@@ -11,9 +11,10 @@ from http.server import SimpleHTTPRequestHandler
 from pathlib import Path
 from collections import defaultdict
 
+import data_access
 import visualize
 
-DEFAULT_DATA_DIR = "data"
+DEFAULT_DATA_DIR = data_access.DEFAULT_ARCHIVE_DIR
 DEFAULT_OUTPUT = "asc_dashboard.html"
 SNAPSHOT_INTERVAL = 30
 FINISH_LAT = 35.222
@@ -48,30 +49,14 @@ def color_for(name):
 
 
 def load_snapshots(data_dir):
-    path = Path(data_dir)
-    snaps = []
-    for f in sorted(path.glob("traces_*.json")):
-        with open(f) as fh:
-            d = json.load(fh)
-            snaps.append({
-                "ts": d.get("timestamp", ""),
-                "ts_unix": d.get("timestamp_unix", 0),
-                "count": d.get("tracker_count", 0),
-            })
-    return snaps
+    return data_access.load_snapshots(data_dir)
 
 
 def load_latest_weather(data_dir):
     """Load the most recent weather observation."""
-    path = Path(data_dir)
     latest = None
-    for f in sorted(path.glob("weather_*.jsonl")):
-        with open(f) as fh:
-            for line in fh:
-                line = line.strip()
-                if not line:
-                    continue
-                latest = json.loads(line)
+    for record in data_access.iter_weather_records(data_dir):
+        latest = record
     return latest
 
 
@@ -116,17 +101,10 @@ def clean_path_points(points):
 
 def load_distances(data_dir):
     """Calculate cumulative distance traveled per serial from update log."""
-    path = Path(data_dir)
     entries = defaultdict(list)
-    for f in sorted(path.glob("updates_*.jsonl")):
-        with open(f) as fh:
-            for line in fh:
-                line = line.strip()
-                if not line:
-                    continue
-                e = json.loads(line)
-                if e.get("lat") is not None and e.get("lon") is not None:
-                    entries[e.get("serial", "?")].append(e)
+    for e in data_access.iter_update_records(data_dir):
+        if e.get("lat") is not None and e.get("lon") is not None:
+            entries[e.get("serial", "?")].append(e)
 
     distances = {}
     for serial, pts in entries.items():
@@ -142,30 +120,20 @@ def load_distances(data_dir):
 
 def load_point_counts(data_dir):
     """Count update log entries per serial."""
-    path = Path(data_dir)
     counts = {}
-    for f in sorted(path.glob("updates_*.jsonl")):
-        with open(f) as fh:
-            for line in fh:
-                line = line.strip()
-                if not line:
-                    continue
-                e = json.loads(line)
-                s = e.get("serial", "?")
-                counts[s] = counts.get(s, 0) + 1
+    for e in data_access.iter_update_records(data_dir):
+        s = e.get("serial", "?")
+        counts[s] = counts.get(s, 0) + 1
     return counts
 
 
 def load_latest(data_dir):
     """Load the latest snapshot and return team list + timestamp."""
-    path = Path(data_dir)
-    snaps = sorted(path.glob("traces_*.json"))
-    if not snaps:
+    records = list(data_access.iter_snapshot_records(data_dir))
+    if not records:
         return [], None, 0
 
-    latest = snaps[-1]
-    with open(latest) as fh:
-        d = json.load(fh)
+    d = records[-1]
 
     point_counts = load_point_counts(data_dir)
     distances = load_distances(data_dir)
