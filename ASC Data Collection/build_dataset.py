@@ -64,6 +64,25 @@ def gzip_copy(source_path, output_path):
             dst.write(chunk)
 
 
+def load_existing_snapshot_archive(snapshot_dir):
+    existing = defaultdict(dict)
+    if not snapshot_dir.exists():
+        return existing
+
+    for archive_path in sorted(snapshot_dir.glob("snapshots_*.jsonl.gz")):
+        day = archive_path.name.replace("snapshots_", "").replace(".jsonl.gz", "")
+        with gzip.open(archive_path, "rt", encoding="utf-8") as handle:
+            for line in handle:
+                line = line.strip()
+                if not line:
+                    continue
+                record = json.loads(line)
+                timestamp = record.get("timestamp")
+                if timestamp:
+                    existing[day][timestamp] = record
+    return existing
+
+
 def package_jsonl_group(source_paths, output_dir, manifest, kind):
     for source_path in source_paths:
         output_path = output_dir / f"{source_path.name}.gz"
@@ -99,35 +118,45 @@ def package_pins(source_paths, output_dir, manifest):
         })
 
 
-def package_snapshots(source_paths, output_dir, manifest):
+def package_snapshots(source_paths, output_dir, manifest, existing_snapshot_records=None):
     grouped = defaultdict(list)
     for source_path in source_paths:
         day = source_path.name.split("_", 1)[1].split("T", 1)[0]
         grouped[day].append(source_path)
 
-    for day, paths in sorted(grouped.items()):
+    existing_snapshot_records = existing_snapshot_records or defaultdict(dict)
+    all_days = sorted(set(grouped.keys()) | set(existing_snapshot_records.keys()))
+
+    for day in all_days:
+        paths = grouped.get(day, [])
         output_path = output_dir / f"snapshots_{day}.jsonl.gz"
-        record_count = 0
+        merged_records = dict(existing_snapshot_records.get(day, {}))
         output_path.parent.mkdir(parents=True, exist_ok=True)
+        for source_path in sorted(paths):
+            with open(source_path, "r", encoding="utf-8") as source_handle:
+                record = json.load(source_handle)
+            timestamp = record.get("timestamp")
+            if timestamp:
+                merged_records[timestamp] = record
+
+        ordered_records = [merged_records[timestamp] for timestamp in sorted(merged_records)]
         with gzip.open(output_path, "wt", encoding="utf-8") as handle:
-            for source_path in sorted(paths):
-                with open(source_path, "r", encoding="utf-8") as source_handle:
-                    record = json.load(source_handle)
+            for record in ordered_records:
                 handle.write(json.dumps(record, separators=(",", ":")))
                 handle.write("\n")
-                record_count += 1
 
         manifest["packages"].append({
             "kind": "snapshots",
             "date": day,
             "source_file_count": len(paths),
-            "source_file_first": str(sorted(paths)[0].relative_to(manifest["source_root"])),
-            "source_file_last": str(sorted(paths)[-1].relative_to(manifest["source_root"])),
+            "source_file_first": str(sorted(paths)[0].relative_to(manifest["source_root"])) if paths else None,
+            "source_file_last": str(sorted(paths)[-1].relative_to(manifest["source_root"])) if paths else None,
+            "preserved_archive_records": max(0, len(ordered_records) - len(paths)),
             "output_file": str(output_path.relative_to(manifest["root"])),
-            "record_count": record_count,
+            "record_count": len(ordered_records),
             "original_bytes": sum(path.stat().st_size for path in paths),
             "archived_bytes": output_path.stat().st_size,
-            "source_sha256": aggregate_sha256(paths),
+            "source_sha256": aggregate_sha256(paths) if paths else None,
         })
 
 
@@ -291,6 +320,7 @@ def build_dataset(base_dir, output_root):
     base_dir = Path(base_dir).resolve()
     output_root = Path(output_root).resolve()
     raw_output = output_root / "raw"
+    existing_snapshot_records = load_existing_snapshot_archive(output_root / "raw" / "snapshots")
     ensure_clean_dir(raw_output)
 
     manifest = {
@@ -305,7 +335,7 @@ def build_dataset(base_dir, output_root):
     package_pins(sorted(data_dir.glob("pins_*.json")), raw_output / "pins", manifest)
 
     snapshot_sources = sorted(data_dir.glob("traces_*.json")) + sorted(base_dir.glob("traces_*.json"))
-    package_snapshots(snapshot_sources, raw_output / "snapshots", manifest)
+    package_snapshots(snapshot_sources, raw_output / "snapshots", manifest, existing_snapshot_records)
     package_log(base_dir / "collector.log", raw_output / "logs", manifest)
 
     manifest_path = output_root / "manifest.json"

@@ -272,10 +272,11 @@
       "source_file_count": 1,
       "source_file_first": "data/traces_2026-07-25T23-57-52.json",
       "source_file_last": "data/traces_2026-07-25T23-57-52.json",
+      "preserved_archive_records": 10,
       "output_file": "raw/snapshots/snapshots_2026-07-25.jsonl.gz",
-      "record_count": 1,
+      "record_count": 11,
       "original_bytes": 8345,
-      "archived_bytes": 1230,
+      "archived_bytes": 2989,
       "source_sha256": "449d25b24cbb659ca5ba0575db7695e17900ac460901d9a57dfdb9fbd3a069cf"
     },
     {
@@ -284,6 +285,7 @@
       "source_file_count": 4399,
       "source_file_first": "data/traces_2026-07-26T00-07-10.json",
       "source_file_last": "data/traces_2026-07-26T20-43-12.json",
+      "preserved_archive_records": 0,
       "output_file": "raw/snapshots/snapshots_2026-07-26.jsonl.gz",
       "record_count": 4399,
       "original_bytes": 36718566,
@@ -296,6 +298,7 @@
       "source_file_count": 1713,
       "source_file_first": "data/traces_2026-07-27T07-00-00.json",
       "source_file_last": "data/traces_2026-07-27T21-59-38.json",
+      "preserved_archive_records": 0,
       "output_file": "raw/snapshots/snapshots_2026-07-27.jsonl.gz",
       "record_count": 1713,
       "original_bytes": 19117999,
@@ -308,6 +311,7 @@
       "source_file_count": 1486,
       "source_file_first": "data/traces_2026-07-28T07-00-00.json",
       "source_file_last": "data/traces_2026-07-28T19-59-49.json",
+      "preserved_archive_records": 0,
       "output_file": "raw/snapshots/snapshots_2026-07-28.jsonl.gz",
       "record_count": 1486,
       "original_bytes": 16562017,
@@ -320,6 +324,7 @@
       "source_file_count": 1716,
       "source_file_first": "data/traces_2026-07-29T07-00-00.json",
       "source_file_last": "data/traces_2026-07-29T21-59-51.json",
+      "preserved_archive_records": 0,
       "output_file": "raw/snapshots/snapshots_2026-07-29.jsonl.gz",
       "record_count": 1716,
       "original_bytes": 16733475,
@@ -332,6 +337,7 @@
       "source_file_count": 1716,
       "source_file_first": "data/traces_2026-07-30T07-00-00.json",
       "source_file_last": "data/traces_2026-07-30T21-59-46.json",
+      "preserved_archive_records": 0,
       "output_file": "raw/snapshots/snapshots_2026-07-30.jsonl.gz",
       "record_count": 1716,
       "original_bytes": 15240101,
@@ -344,6 +350,7 @@
       "source_file_count": 1642,
       "source_file_first": "data/traces_2026-07-31T07-00-00.json",
       "source_file_last": "data/traces_2026-07-31T21-23-04.json",
+      "preserved_archive_records": 0,
       "output_file": "raw/snapshots/snapshots_2026-07-31.jsonl.gz",
       "record_count": 1642,
       "original_bytes": 14461909,
@@ -356,6 +363,7 @@
       "source_file_count": 1034,
       "source_file_first": "data/traces_2026-08-01T07-00-00.json",
       "source_file_last": "data/traces_2026-08-01T18-10-55.json",
+      "preserved_archive_records": 0,
       "output_file": "raw/snapshots/snapshots_2026-08-01.jsonl.gz",
       "record_count": 1034,
       "original_bytes": 9135272,
@@ -377,9 +385,9 @@
   ],
   "totals": {
     "package_count": 31,
-    "record_count": 2301877,
+    "record_count": 2301887,
     "original_bytes": 347383172,
-    "archived_bytes": 14593497
+    "archived_bytes": 14595256
   },
-  "created_at": "2026-10-17T17:38:01.132514+00:00"
+  "created_at": "2026-10-17T17:47:33.665814+00:00"
 }
