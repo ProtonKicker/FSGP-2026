@@ -322,7 +322,7 @@ tr:hover td {{ background: rgba(255,255,255,0.015); }}
   <header class="toolbar">
     <div>
       <div class="eyebrow">ASC 2026 portable dashboard</div>
-      <div class="title">Current field status from the tracked archive</div>
+      <div class="title">Current field status</div>
     </div>
     <div class="toolbar-right">
       <a class="link-chip" href="asc_trajectory.html" target="_blank">Trajectory explorer</a>
@@ -343,14 +343,14 @@ tr:hover td {{ background: rgba(255,255,255,0.015); }}
 
   <section class="section">
     <h2>Weather and route context</h2>
-    <p>This page uses the same tracked archive as the portfolio. The embedded map gives quick route context, while the table stays optimized for status scanning.</p>
+    <p>Same archive. Route view plus status table.</p>
     <div class="weather-row" id="weather-row"></div>
     <div style="margin-top:16px"><iframe src="asc_trajectory.html" title="ASC trajectory explorer"></iframe></div>
   </section>
 
   <section class="section">
     <h2>Latest team table</h2>
-    <p>`GPS path` and `Geo finish distance` are local calculations from collected coordinates, so they are useful for teammate analysis but are not official ASC scoring values.</p>
+    <p>Local route math, not official ASC scoring.</p>
     <table>
       <thead>
         <tr>

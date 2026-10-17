@@ -341,25 +341,18 @@ def generate_html(data_dir, manifest_path):
     top_team = max(teams, key=lambda item: item["stats"]["distance_km"]) if teams else None
     sections = [
         {
-            "title": "If you delete the local raw folder",
-            "body": (
-                "You still keep the actual collected content. "
-                "The tracked `dataset/raw` folder is the portable source of truth, and "
-                "`restore_dataset.py` can rebuild a working raw layout from it."
-            ),
+            "title": "Portable",
+            "body": "Git has the archive. `restore_dataset.py` rebuilds the raw layout.",
         },
         {
-            "title": "Open these first",
-            "body": (
-                "`dataset/TEAMMATE_GUIDE.md`, `dataset/summary.json`, `dataset/daily_coverage.csv`, "
-                "and `dataset/team_metrics.csv` are the quickest non-visual entry points for a teammate."
-            ),
+            "title": "Start here",
+            "body": "`summary.json`, `daily_coverage.csv`, and `team_metrics.csv` give the fast read.",
         },
         {
-            "title": "Biggest route in this capture",
+            "title": "Longest route",
             "body": (
-                f"{top_team['name']} covered about {fmt_float(top_team['stats']['distance_km'])} km "
-                f"({fmt_float(miles(top_team['stats']['distance_km']))} mi) in the derived local route math."
+                f"{top_team['name']}: {fmt_float(top_team['stats']['distance_km'])} km / "
+                f"{fmt_float(miles(top_team['stats']['distance_km']))} mi."
                 if top_team else "No team route data available."
             ),
         },
@@ -569,6 +562,12 @@ body {{ padding: 24px 0 40px; }}
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid var(--line-soft);
+  background:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+    radial-gradient(circle at top, rgba(211, 183, 122, 0.10), transparent 55%),
+    #0d1117;
+  background-size: 48px 48px, 48px 48px, auto, auto;
 }}
 table {{
   width: 100%;
@@ -686,7 +685,7 @@ code {{
   <header class="topbar">
     <div class="brand">
       <div class="eyebrow">American Solar Challenge 2026</div>
-      <div>This portfolio is built from the Git-tracked archive, not from a hidden local-only data folder.</div>
+      <div>Git-tracked ASC archive.</div>
     </div>
     <div class="top-actions">
       <span class="chip">Portable archive</span>
@@ -701,11 +700,7 @@ code {{
     <div class="hero-main">
       <div class="eyebrow">ASC 2026 Data Portfolio</div>
       <h1>One clean handoff for the full race capture.</h1>
-      <p>
-        This page is meant to answer the teammate question fast: what was collected, how much of it exists,
-        how trustworthy it looks, and where to open the raw files next. The Git repo now carries a portable
-        archival dataset, daily coverage summaries, team metrics, and a restore path back to a working raw layout.
-      </p>
+      <p>Portable archive, quick summaries, and no map API dependency.</p>
     </div>
     <aside class="hero-side">
       {"".join(f'<div class="callout"><strong>{html.escape(item["title"])}</strong>{html.escape(item["body"])}</div>' for item in sections)}
@@ -716,7 +711,7 @@ code {{
     <div class="section-header">
       <div>
         <h2 class="section-title">Archive Snapshot</h2>
-        <p class="section-copy">A quick read on archive size, race coverage, and why the pushed Git version is enough to keep if the local runtime folder disappears.</p>
+        <p class="section-copy">Archive size, coverage, and handoff state.</p>
       </div>
     </div>
     <div class="stats">{render_cards(cards)}</div>
@@ -726,7 +721,7 @@ code {{
     <div class="section-header">
       <div>
         <h2 class="section-title">Open These First</h2>
-        <p class="section-copy">These are the files a teammate can open in order to understand the archive without knowing the collector internals.</p>
+        <p class="section-copy">Open these first.</p>
       </div>
     </div>
     <div class="link-list">
@@ -738,7 +733,7 @@ code {{
     <div class="section-header">
       <div>
         <h2 class="section-title">Route Overview</h2>
-        <p class="section-copy">Simplified team routes and approved pins from the tracked archive. This is a visual index, while the CSVs and compressed raw files remain the source material.</p>
+        <p class="section-copy">Route-only view. No external tiles.</p>
       </div>
     </div>
     <div id="map"></div>
@@ -749,7 +744,7 @@ code {{
       <div class="section-header">
         <div>
           <h2 class="section-title">Daily Coverage</h2>
-          <p class="section-copy">How much data landed on each race day, broken out by updates, snapshots, weather samples, and approved pins.</p>
+        <p class="section-copy">How much data landed each day.</p>
         </div>
       </div>
       <table>
@@ -763,7 +758,7 @@ code {{
       <div class="section-header">
         <div>
           <h2 class="section-title">Weather Context</h2>
-          <p class="section-copy">Daily temperature and wind summary from the archived Open-Meteo samples.</p>
+          <p class="section-copy">Daily weather summary.</p>
         </div>
       </div>
       <table>
@@ -780,7 +775,7 @@ code {{
       <div class="section-header">
         <div>
           <h2 class="section-title">Team Route Metrics</h2>
-          <p class="section-copy">Derived local route math from the captured coordinates. Useful for comparisons, but not a substitute for official ASC progress scoring.</p>
+          <p class="section-copy">Derived route math for comparisons.</p>
         </div>
       </div>
       <table>
@@ -794,7 +789,7 @@ code {{
       <div class="section-header">
         <div>
           <h2 class="section-title">Collector Signals</h2>
-          <p class="section-copy">The archived log is part of the portable package, so collection behavior can be reviewed later instead of being trapped in one local machine.</p>
+          <p class="section-copy">Collection behavior from the archived log.</p>
         </div>
       </div>
       <div class="stats">
@@ -818,7 +813,7 @@ code {{
     <div class="section-header">
       <div>
         <h2 class="section-title">Data Components</h2>
-        <p class="section-copy">A cold-start schema skim for someone seeing these files for the first time.</p>
+        <p class="section-copy">Field shapes at a glance.</p>
       </div>
     </div>
     <div class="schema-grid">
@@ -834,7 +829,7 @@ code {{
     <div class="section-header">
       <div>
         <h2 class="section-title">Tracked Archive Inventory</h2>
-        <p class="section-copy">Every compressed package committed to Git, with record counts and size reduction.</p>
+        <p class="section-copy">Everything committed to Git.</p>
       </div>
     </div>
     <table>
@@ -843,9 +838,7 @@ code {{
       </thead>
       <tbody>{render_manifest_rows(manifest)}</tbody>
     </table>
-    <p class="footer-note" style="margin-top:14px">
-      Snapshot objects are preserved losslessly in the daily JSONL archives. Restored snapshot files may not match the original pretty-printed whitespace byte-for-byte, but the actual JSON content is preserved.
-    </p>
+    <p class="footer-note" style="margin-top:14px">Snapshot JSON content is preserved.</p>
   </section>
 </div>
 
@@ -872,11 +865,6 @@ document.getElementById("imperial-toggle").addEventListener("click", () => {{
 }});
 
 const map = L.map("map", {{ zoomControl: true }});
-L.tileLayer("https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png", {{
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
-}}).addTo(map);
-
 const bounds = L.latLngBounds([]);
 MAP_TEAMS.forEach(team => {{
   const latlngs = team.points.map(point => [point.lat, point.lng]);

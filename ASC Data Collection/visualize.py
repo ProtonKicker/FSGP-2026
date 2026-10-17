@@ -345,10 +345,6 @@ def generate_html(teams, snapshots, pins=None, team_filter=None, title=None):
     teams_json = json.dumps(teams, default=str)
     snaps_json = json.dumps(snapshots, default=str)
     pins_json = json.dumps(pins, default=str)
-    tile_attribution = json.dumps(
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> '
-        '&copy; <a href="https://carto.com/">CARTO</a>'
-    )
     page_title = title or "ASC 2026 Archive Explorer"
 
     html = f"""<!DOCTYPE html>
@@ -557,6 +553,12 @@ button:hover {{
 #map {{
     width: 100%;
     height: 100%;
+    background:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+        radial-gradient(circle at top, rgba(88,166,255,0.12), transparent 55%),
+        #0d1117;
+    background-size: 48px 48px, 48px 48px, auto, auto;
 }}
 #bottom-bar {{
     display: grid;
@@ -623,10 +625,7 @@ button:hover {{
 <div id="app">
     <aside id="sidebar">
         <h1>ASC 2026 Archive Explorer</h1>
-        <div id="subtitle">
-            Replay every route, spotlight a single team, and surface suspicious route
-            segments that may need manual checking.
-        </div>
+        <div id="subtitle">Self-contained route replay. No map API.</div>
 
         <div class="section">
             <div class="section-title">Replay Controls</div>
@@ -717,11 +716,6 @@ const map = L.map("map", {{
     zoomControl: true,
     attributionControl: false,
 }});
-
-L.tileLayer("https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png", {{
-    maxZoom: 19,
-    attribution: {tile_attribution},
-}}).addTo(map);
 
 const teamLayers = new Map();
 const routeLayer = L.layerGroup().addTo(map);
